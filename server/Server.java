@@ -4,6 +4,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Server{
     private DatagramSocket socket;
@@ -39,8 +41,8 @@ public class Server{
                 for(int i=0;i<8;i++){
                     temp[i]=buf[i];
                 }
-                double i=DataProcess.bytesToDouble(temp, ByteOrder.BIG_ENDIAN);
-                System.out.print(i);
+                // i=DataProcess.bytesToDouble(temp, ByteOrder.BIG_ENDIAN);
+                //System.out.print(i);
 
 
 
@@ -72,6 +74,8 @@ public class Server{
         }
         return ret;
     }
+
+
 
 }
 
