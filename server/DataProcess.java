@@ -3,6 +3,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DataProcess {
@@ -127,37 +128,94 @@ public class DataProcess {
 
     // remove msg type and request id which is 8 byte + method id(4 byte) so start from 12 byte
     // passwd(4 byte, 4 char),currency type(int, 4 byte), init_amount(double), name_length(int 4 byte), name(string variable)
-    public static void unmarshalCreateAccount(byte[] buf){
-        int ptr=12;
+    public static HashMap<String,Object> unmarshalCreateAccount(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
 
-        String passwd=bytesToString(buf,ptr,length);
-        ptr+=length;
-        System.out.println(passwd);
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
 
-        int currencyType=bytesToInt(buf,ptr,ByteOrder.BIG_ENDIAN);
-        ptr+=length;
-        System.out.println(currencyType);
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
 
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
 
-        double initAmount=bytesToDouble(buf,ptr,ByteOrder.BIG_ENDIAN);
-        ptr+=length*2;
-        System.out.println(initAmount);
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
 
-        int nameLength=bytesToInt(buf,ptr,ByteOrder.BIG_ENDIAN);
-        ptr+=length;
-        System.out.println(nameLength);
-
-
-        String name=bytesToString(buf,ptr,nameLength);
-        System.out.println(name);
-
-
-
+        return hashMap;
     }
-    public static void unmarshalCreateAccount(){
 
+    //passwd(4 byte, 4 char), acct number(int), name(string variable)
+    public static HashMap<String,Object> unmarshalCloseAccount(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
     }
+    //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    public static HashMap<String,Object> unmarshalDeposite(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+    //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    public static HashMap<String,Object> unmarshalWithdraw(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+
+
+
+
+
 
     public static byte[] marshal(Object ...obj){
         List<Byte> bytesList=new ArrayList<>();
