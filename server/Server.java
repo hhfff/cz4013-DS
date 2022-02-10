@@ -156,7 +156,57 @@ public class Server{
     	
     }
 
+    public void viewBalance(int accountNum, String accountName, String password) {
+    	int i;
+    	String balanceInfo; 
+    	i = userVerification(accountNum,accountName,password);
+    	if(i != -1) {
+    		balanceInfo= accountList.get(i).saving.toString();
+    		serviceReply("Your balance under account : "+accountNum+"is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+    	}
+    	
+    }
     
+    public void currencyExchange(int accountNum, String accountName, String password, Currency currency1,  Currency currency2, double amount ) {
+    	int i;
+    	double newAmount; 
+    	String balanceInfo;
+    	i = userVerification(accountNum,accountName,password);
+    	if((double)accountList.get(i).saving.get(currency1) >= amount) {
+    		switch(currency1) {
+    			case CNY: if(currency2== Currency.MYR) {
+    						newAmount = amount/1.5;
+    					  }
+    					  else {
+    						newAmount = amount/5.0;
+    					  }
+    					  break;
+    			case MYR: if(currency2== Currency.CNY) {
+							newAmount = amount*1.5;
+						  }
+    					  else {
+    						newAmount = amount/3.0;
+			  			  }
+						  break;
+    			case SGD: if(currency2== Currency.CNY) {
+							newAmount = amount*5.0;
+						  }
+    					  else {
+    						newAmount = amount*3.0;
+    					  }
+						  break;
+    		}
+    		accountList.get(i).saving.put(currency1, (double)accountList.get(i).saving.get(currency1)-amount);
+    		accountList.get(i).saving.put(currency2, (double)accountList.get(i).saving.get(currency2)+amount);
+    		balanceInfo= accountList.get(i).saving.toString();
+    		serviceReply("Your new balance under account : "+accountNum+"is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+    		
+    	}
+    	else {
+    		serviceReply("Sorry, you don't have enough "+currency1+" to convert to"+currency2);
+    	}
+    	
+    }
     public void serviceReply(String message) {
     	System.out.println(message);
     	
