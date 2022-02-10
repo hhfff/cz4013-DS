@@ -2,8 +2,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DataProcess {
+    public static int length=4;
     /*public static byte[] intToBytes(final int data) {
         return new byte[]{
                 (byte) ((data >> 24) & 0xff),
@@ -28,10 +32,14 @@ public class DataProcess {
         byteBuffer.putInt(data);
         return  byteBuffer.array();
     }
-    public static int bytesToInt(byte[] data,ByteOrder byteOrder) {
+    public static int bytesToInt(byte[] buf,int start,ByteOrder byteOrder) {
+        byte[] bytes = new byte[length];
+        for(int i = 0; i < length; i++) {
+            bytes[i] = buf[start+i];
+        }
         ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
         byteBuffer.order(byteOrder);
-        byteBuffer.put(data);
+        byteBuffer.put(bytes);
         byteBuffer.flip();
         return byteBuffer.getInt();
     }
@@ -42,10 +50,14 @@ public class DataProcess {
         return  byteBuffer.array();
     }
 
-    public static double bytesToDouble(byte[] doubleBytes,ByteOrder byteOrder){
+    public static double bytesToDouble(byte[] buf,int start,ByteOrder byteOrder){
+        byte[] bytes = new byte[length*2];
+        for(int i = 0; i < length*2; i++) {
+            bytes[i] = buf[start+i];
+        }
         ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES);
         byteBuffer.order(byteOrder);
-        byteBuffer.put(doubleBytes);
+        byteBuffer.put(bytes);
         byteBuffer.flip();
         return byteBuffer.getDouble();
     }
@@ -80,11 +92,12 @@ public class DataProcess {
         }*/
         return str.getBytes(StandardCharsets.UTF_8);
     }
-    public static String bytesToString(byte[] data,int start,int end) {
-        byte[] bytes = new byte[end - start];
-        for(int i = start; i < end; i++) {
-            bytes[i-start] = (data[i]);
+    public static String bytesToString(byte[] buf,int start,int numberOfByteToRead) {
+        byte[] bytes = new byte[numberOfByteToRead];
+        for(int i = 0; i < numberOfByteToRead; i++) {
+            bytes[i] = buf[start+i];
         }
+        printByteToHex(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
 
     }
@@ -111,6 +124,118 @@ public class DataProcess {
             sb.append(String.format("%02X ", b));
         }
         System.out.println(sb.toString());
+    }
+
+    // remove msg type and request id which is 8 byte + method id(4 byte) so start from 12 byte
+    // passwd(4 byte, 4 char),currency type(int, 4 byte), init_amount(double), name_length(int 4 byte), name(string variable)
+    public static HashMap<String,Object> unmarshalCreateAccount(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+
+    //passwd(4 byte, 4 char), acct number(int), name(string variable)
+    public static HashMap<String,Object> unmarshalCloseAccount(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+    //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    public static HashMap<String,Object> unmarshalDeposite(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+    //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    public static HashMap<String,Object> unmarshalWithdraw(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+
+
+
+
+
+
+    public static byte[] marshal(Object ...obj){
+        List<Byte> bytesList=new ArrayList<>();
+        for(Object o :obj){
+            if(o instanceof Integer){
+                byte[] bytes=intToBytes((Integer)o,ByteOrder.BIG_ENDIAN);
+                for(byte b :bytes) bytesList.add(b);
+            }else if(o instanceof Double){
+                byte[] bytes=doubleToBytes((Double)o,ByteOrder.BIG_ENDIAN);
+                for(byte b :bytes) bytesList.add(b);
+            }else  if(o instanceof  String){
+                byte[] bytes=stringToBytes((String)o);
+                for(byte b :bytes) bytesList.add(b);
+            }else{
+                throw new IllegalArgumentException();
+            }
+        }
+        byte[] bytes=new byte[bytesList.size()];
+        for(int i=0;i<bytesList.size();i++) bytes[i]= bytesList.get(i);
+        return bytes;
     }
 
 
