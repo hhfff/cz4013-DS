@@ -97,6 +97,7 @@ public class Server{
     	accountList.add(newUser);
     	
     	serviceReply("New account for "+newUser.accountName+" has been created, Acoount number is: "+newUser.accountNum);
+    	updateUser(accountName+" has create a new account.");
     }
     
     public void closingUserAccount(int accountNum, String accountName, String password) {
@@ -110,6 +111,7 @@ public class Server{
 		if(i!=-1) {
 			accountList.remove(i);
 			serviceReply(CancelSuccess);
+			updateUser(accountName+"has closing his account");
 		}
     	
     	
@@ -127,6 +129,7 @@ public class Server{
 			accountList.get(i).saving.put(currency, balance);
 			depositSuccess="Your new balance for "+currency.toString()+" is : "+balance;
 			serviceReply(depositSuccess);
+			updateUser(accountName+" deposit some money to account.");
 		}
 			
     
@@ -146,10 +149,11 @@ public class Server{
 			serviceReply(balanceNotEnoug);
 		}
 		else {
-			balance = (double) accountList.get(i).saving.get(currency)+amount;
+			balance = (double) accountList.get(i).saving.get(currency)-amount;
 			accountList.get(i).saving.put(currency, balance);
 			depositSuccess="Your new balance for "+currency.toString()+" is : "+balance;
 			serviceReply(depositSuccess);
+			updateUser(accountName+" withdraw some money from account.");
 		}
 		
 		}
@@ -163,6 +167,7 @@ public class Server{
     	if(i != -1) {
     		balanceInfo= accountList.get(i).saving.toString();
     		serviceReply("Your balance under account : "+accountNum+"is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+    		updateUser(accountName+" check his account.");
     	}
     	
     }
@@ -195,11 +200,14 @@ public class Server{
     						newAmount = amount*3.0;
     					  }
 						  break;
+			    default: 	newAmount = 0;
+			    		  break;
     		}
     		accountList.get(i).saving.put(currency1, (double)accountList.get(i).saving.get(currency1)-amount);
-    		accountList.get(i).saving.put(currency2, (double)accountList.get(i).saving.get(currency2)+amount);
+    		accountList.get(i).saving.put(currency2, (double)accountList.get(i).saving.get(currency2)+newAmount);
     		balanceInfo= accountList.get(i).saving.toString();
-    		serviceReply("Your new balance under account : "+accountNum+"is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+    		serviceReply("Your new balance under account : "+accountNum+" is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+    		updateUser(accountName);
     		
     	}
     	else {
@@ -212,8 +220,8 @@ public class Server{
     	
     }
     
-    public void UpdateUser(String message) {
-    	
+    public void updateUser(String message) {
+    	System.out.println(message);
     }
     
     private int userVerification(int accountNum, String accountName, String password) {
