@@ -10,8 +10,8 @@ public class AccountService {
 
     public AccountService(){}
     public void createUserAccount(String accountName, String password, Currency currency, double balance) {
+        System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
 
-        System.out.println(String.format("name %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         accountNumber+=1;
         Map<Currency, Double> saving = new HashMap<Currency, Double>();
         saving.put(Currency.CNY, 0.0);
@@ -26,6 +26,8 @@ public class AccountService {
     }
 
     public void closingUserAccount(int accountNum, String accountName, String password) {
+        System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
+
         int i;
         //Account currentAccount= new Account();
 
@@ -43,6 +45,8 @@ public class AccountService {
     }
 
     public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount) {
+        System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
+
         int i; double balance;
         //Account currentAccount= new Account();
 
@@ -62,6 +66,8 @@ public class AccountService {
     }
 
     public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount) {
+        System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
+
         int i; double balance;
         //Account currentAccount= new Account();
 
@@ -86,6 +92,8 @@ public class AccountService {
     }
 
     public void viewBalance(int accountNum, String accountName, String password) {
+        System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
+
         int i;
         String balanceInfo;
         i = userVerification(accountNum,accountName,password);
@@ -98,6 +106,8 @@ public class AccountService {
     }
 
     public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount ) {
+        System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
+
         int i;
         double newAmount;
         String balanceInfo;

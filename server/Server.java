@@ -30,23 +30,36 @@ public class Server{
         while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
             try {
-                //testing code
-                int messsageType=0;
-                int requestITempD=0;
-                int methodTemp=1;//1-7
-                String pass="pass";
-                int currFromType=0;
-                int currToType;
+                //testing code for correct argv passing
+                String pass="4488";
+                int currFromType=0; //if out of enum, will throw error,ArrayIndexOutOfBoundsExceptio
+                int currToType=2;
                 double money=1000.0;
-                String name="haskel";
+                String name="abcdefg";
                 int acctNUm=1;
 
-                buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
+                //create
+                //buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
 
+                //close
+                //buf=DataProcess.marshal(0,0,2,pass,acctNUm,name.length(),name);
+
+                //deposite
+                //buf=DataProcess.marshal(0,0,3,pass,acctNUm,currFromType,money,name.length(),name);
+
+                //withdraw
+                //buf=DataProcess.marshal(0,0,4,pass,acctNUm,currFromType,money,name.length(),name);
+
+                //view balance
+                //buf=DataProcess.marshal(0,0,5,pass,acctNUm,name.length(),name);
+
+                //curr exchange
+                buf=DataProcess.marshal(0,0,6,pass,acctNUm,currFromType,currToType,money,name.length(),name);
 
                 processData(buf);
 
                 socket.receive(datagramPacket);
+                processData(buf);
                 //System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
 
@@ -117,8 +130,15 @@ public class Server{
                     (Currency) data.get("currencyType"),
                     (double) data.get("amt")
             );
-        }else if(method==Method.WITHDRAW.getValue()){
+        }else if(method==Method.VIEW_BALANCE.getValue()){
             var data=DataProcess.unmarshalViewBalance(buf,12);
+            accountService.viewBalance(
+                    (int) data.get("acctNum"),
+                    (String) data.get("name"),
+                    (String) data.get("password")
+            );
+        } else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+            var data=DataProcess.unmarshalCurrencyExchange(buf,12);
             accountService.currencyExchange(
                     (int) data.get("acctNum"),
                     (String) data.get("name"),

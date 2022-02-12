@@ -3,8 +3,8 @@ public enum Method {
     CLOSE_ACCOUNT(2),
     DEPOSITE(3),
     WITHDRAW(4),
-    CURRENCY_EXCHANGE(5),
-    VIEW_BALANCE(6),
+    VIEW_BALANCE(5),
+    CURRENCY_EXCHANGE(6),
     MONITOR(7);
     private int value;
     private Method(int value){

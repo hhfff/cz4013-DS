@@ -243,6 +243,7 @@ public class DataProcess {
         startByte+=length;
         hashMap.put("currencyToType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
         startByte+=length;
+
         hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
         startByte+=length*2;
 
