@@ -117,7 +117,7 @@ public class Server{
                     (Currency) data.get("currencyType"),
                     (double) data.get("amt")
             );
-        }else if(method==Method.WITHDRAW.getValue()){
+        }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
             var data=DataProcess.unmarshalViewBalance(buf,12);
             accountService.currencyExchange(
                     (int) data.get("acctNum"),
