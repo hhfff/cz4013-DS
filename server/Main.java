@@ -31,7 +31,7 @@ public class Main {
         }
         DataProcess.unmarshalCreateAccount(buffer,12);
         
-        Server server=new Server();
+        /*Server server=new Server();
         server.createUserAccount("Tom","password",Server.Currency.CNY,500.00);
         server.depositToAccount(1, "Tom", "password", Server.Currency.SGD, 1000.13);
         server.WithdrawFromAccount(1, "Tom", "password", Server.Currency.SGD, 200.0);
@@ -46,7 +46,7 @@ public class Main {
           System.out.println(server.accountList.get(0).accountName);
           System.out.println(server.accountList.get(0).accountNum);
           System.out.println(server.accountList.get(0).passwd);
-          System.out.println(server.accountList.get(0).saving);
+          System.out.println(server.accountList.get(0).saving);*/
 
         //
         //server.start();

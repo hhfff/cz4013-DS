@@ -134,7 +134,7 @@ public class DataProcess {
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
 
-        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        hashMap.put("currencyType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
         startByte+=length;
 
         hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
@@ -175,7 +175,7 @@ public class DataProcess {
         hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
         startByte+=length;
 
-        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        hashMap.put("currencyType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
         startByte+=length;
 
         hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
@@ -198,7 +198,7 @@ public class DataProcess {
         hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
         startByte+=length;
 
-        hashMap.put("currencyType",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        hashMap.put("currencyType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
         startByte+=length;
 
         hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
@@ -211,6 +211,60 @@ public class DataProcess {
 
         return hashMap;
     }
+    //passwd(4 byte, 4 char), acct number(int),name(string variable)
+    public static HashMap<String,Object> unmarshalViewBalance(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+
+    //passwd(4 byte, 4 char), acct number(int), currency from type(int),currency to type(int), amount(double),amt(double),name(string variable)
+    public static HashMap<String,Object> unmarshalCurrencyExchange(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+
+        hashMap.put("password",bytesToString(buf,startByte,length));
+        startByte+=length;
+
+        hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        hashMap.put("currencyFromType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
+        startByte+=length;
+        hashMap.put("currencyToType",Currency.values()[bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN)]);
+        startByte+=length;
+        hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length*2;
+
+
+        int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
+
+        hashMap.put("name",bytesToString(buf,startByte,nameLength));
+
+        return hashMap;
+    }
+
+    // interval in seconds
+    public static HashMap<String,Object> unmarshalMonitor(byte[] buf,int startByte){
+        HashMap<String,Object> hashMap=new HashMap<>();
+        hashMap.put("intervalTime",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+
+        return hashMap;
+    }
+
+
 
     public static byte[] marshal(Object ...obj){
         List<Byte> bytesList=new ArrayList<>();
