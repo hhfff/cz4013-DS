@@ -212,11 +212,6 @@ public class DataProcess {
         return hashMap;
     }
 
-
-
-
-
-
     public static byte[] marshal(Object ...obj){
         List<Byte> bytesList=new ArrayList<>();
         for(Object o :obj){
