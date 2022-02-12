@@ -10,6 +10,8 @@ public class AccountService {
 
     public AccountService(){}
     public void createUserAccount(String accountName, String password, Currency currency, double balance) {
+
+        System.out.println(String.format("name %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         accountNumber+=1;
         Map<Currency, Double> saving = new HashMap<Currency, Double>();
         saving.put(Currency.CNY, 0.0);

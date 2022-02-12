@@ -1,7 +1,7 @@
 public enum Currency {
 
-        CNY,
-        MYR,
-        SGD
+        CNY, //0
+        MYR, //1
+        SGD //2
 
 }
