@@ -5,11 +5,11 @@ class UDPSocket:
     socket_bufer =  128
 
     @classmethod
-    def setServerAddress(cls,host, port):
+    def setServerAddress(cls,host ='127.0.0.1', port= 54088):
         cls.serverAddress = (host, port)
 
     @classmethod
-    def send_msg(cls, msg: bytes):
+    def send_msg(cls, msg: bytearray):
         cls.client_socket.sendto(msg, cls.serverAddress)
 
     @classmethod
@@ -22,3 +22,5 @@ class UDPSocket:
 if __name__ == '__main__':
     UDPSocket.setServerAddress('127.0.0.1',54088)
     UDPSocket.send_msg(msg=b'test')
+    msg,_ = UDPSocket.listen_msg()
+    print(type(msg),_)
