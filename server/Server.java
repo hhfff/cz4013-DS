@@ -2,6 +2,7 @@ import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class Server{
                 buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
 
 
-                processData(buf);
+                processData(buf,datagramPacket.getAddress(),datagramPacket.getPort());
 
                 socket.receive(datagramPacket);
                 //System.out.println(data(buf));
@@ -72,7 +73,7 @@ public class Server{
         }
         return ret;
     }
-    private void processData(byte[] buf){
+    private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
         //msg type(4 byte, 0 or 1), request id(from client), method type
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         System.out.println("msgtype:  "+msgType);
@@ -88,14 +89,18 @@ public class Server{
                     (String)data.get("name"),
                     (String) data.get("password"),
                     (Currency) data.get("currencyType"),
-                    (double) data.get("amt")
+                    (double) data.get("amt"),
+                    ip,
+                    port
             );
         }else if(method==Method.CLOSE_ACCOUNT.getValue()){
             var data=DataProcess.unmarshalCloseAccount(buf,12);
             accountService.closingUserAccount(
                     (int) data.get("acctNum"),
                     (String) data.get("name"),
-                    (String) data.get("password")
+                    (String) data.get("password"),
+                    ip,
+                    port
 
             );
         }else if(method==Method.DEPOSITE.getValue()){
@@ -105,7 +110,9 @@ public class Server{
                     (String) data.get("name"),
                     (String) data.get("password"),
                     (Currency) data.get("currencyType"),
-                    (double) data.get("amt")
+                    (double) data.get("amt"),
+                    ip,
+                    port
             );
 
         }else if(method==Method.WITHDRAW.getValue()){
@@ -115,7 +122,9 @@ public class Server{
                     (String) data.get("name"),
                     (String) data.get("password"),
                     (Currency) data.get("currencyType"),
-                    (double) data.get("amt")
+                    (double) data.get("amt"),
+                    ip,
+                    port
             );
         }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
             var data=DataProcess.unmarshalViewBalance(buf,12);
@@ -125,7 +134,9 @@ public class Server{
                     (String) data.get("password"),
                     (Currency) data.get("currencyFromType"),
                     (Currency) data.get("currencyToType"),
-                    (double) data.get("amt")
+                    (double) data.get("amt"),
+                    ip,
+                    port
 
             );
         }else if(method==Method.MONITOR.getValue()){

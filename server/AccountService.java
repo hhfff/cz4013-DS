@@ -1,17 +1,24 @@
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.Map;
+
 public class AccountService {
     private int accountNumber=0;
     private ArrayList<Account> accountList = new ArrayList<Account>();
+    private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
 
 
     public AccountService(){}
-    public void createUserAccount(String accountName, String password, Currency currency, double balance) {
+    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port) throws IOException {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
-
+        String replyMessage;
         accountNumber+=1;
         Map<Currency, Double> saving = new HashMap<Currency, Double>();
         saving.put(Currency.CNY, 0.0);
@@ -20,44 +27,44 @@ public class AccountService {
         saving.put(currency, saving.get(currency)+balance);
         Account newUser = new Account(accountNumber,accountName,password,saving);
         accountList.add(newUser);
-
-        serviceReply("New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum());
+        replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
+        serviceReply(replyMessage,ip,port);
         updateUser(accountName+" has create a new account.");
     }
 
-    public void closingUserAccount(int accountNum, String accountName, String password) {
+    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
         System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
         //Account currentAccount= new Account();
 
-        String CancelSuccess= "Your account has been close successfully";
+        String replyMessage= "Your account has been close successfully";
 
-        i = userVerification(accountNum,accountName,password);
+        i = userVerification(accountNum,accountName,password, ip, port);
 
         if(i!=-1) {
             accountList.remove(i);
-            serviceReply(CancelSuccess);
+            serviceReply(replyMessage,ip,port);
             updateUser(accountName+"has closing his account");
         }
 
 
     }
 
-    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount) {
+    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port) throws IOException {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
         //Account currentAccount= new Account();
 
-        String depositSuccess="";
+        String replyMessage="";
 
-        i = userVerification(accountNum,accountName,password);
+        i = userVerification(accountNum,accountName,password, ip, port);
         if(i!=-1) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
-            depositSuccess="Your new balance for "+currency.toString()+" is : "+balance;
-            serviceReply(depositSuccess);
+            replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
+            serviceReply(replyMessage,ip,port);
             updateUser(accountName+" deposit some money to account.");
         }
 
@@ -65,25 +72,25 @@ public class AccountService {
 
     }
 
-    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount) {
+    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port) throws IOException {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
         //Account currentAccount= new Account();
 
-        String balanceNotEnoug= "Sorry, you don't have enough balance to withdraw "+currency.toString()+" : "+amount+".";
-        String depositSuccess="";
-        i = userVerification(accountNum,accountName,password);
+        String replyMessage;
+        i = userVerification(accountNum,accountName,password, ip, port);
         if(i!=-1) {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
-                serviceReply(balanceNotEnoug);
+            	replyMessage="Sorry, you don't have enough balance to withdraw "+currency.toString()+" : "+amount+".";
+            	serviceReply(replyMessage,ip,port);
             }
             else {
                 balance = (double) accountList.get(i).getSaving().get(currency)-amount;
                 accountList.get(i).getSaving().put(currency, balance);
-                depositSuccess="Your new balance for "+currency.toString()+" is : "+balance;
-                serviceReply(depositSuccess);
+                replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
+                serviceReply(replyMessage,ip,port);
                 updateUser(accountName+" withdraw some money from account.");
             }
 
@@ -91,28 +98,32 @@ public class AccountService {
 
     }
 
-    public void viewBalance(int accountNum, String accountName, String password) {
+    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
         System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
         String balanceInfo;
-        i = userVerification(accountNum,accountName,password);
+        String replyMessage;
+        i = userVerification(accountNum,accountName,password, ip, port);
         if(i != -1) {
-            balanceInfo= accountList.get(i).getSaving().toString();
-            serviceReply("Your balance under account : "+accountNum+"is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
+            balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
+            replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
+            serviceReply(replyMessage,ip,port);
             updateUser(accountName+" check his account.");
         }
 
     }
 
-    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount ) {
+    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port ) throws IOException {
         System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
 
         int i;
         double newAmount;
         String balanceInfo;
-        i = userVerification(accountNum,accountName,password);
-        if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
+        String replyMessage;
+        i = userVerification(accountNum,accountName,password, ip, port);
+        if(i!=-1) {
+        	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
             switch(fromCurrency) {
                 case CNY: if(toCurrency== Currency.MYR) {
                     newAmount = amount/1.5;
@@ -140,26 +151,84 @@ public class AccountService {
             }
             accountList.get(i).getSaving().put(fromCurrency, (double)accountList.get(i).getSaving().get(fromCurrency)-amount);
             accountList.get(i).getSaving().put(toCurrency, (double)accountList.get(i).getSaving().get(toCurrency)+newAmount);
-            balanceInfo= accountList.get(i).getSaving().toString();
-            serviceReply("Your new balance under account : "+accountNum+" is \n"+balanceInfo.substring(1,balanceInfo.length()-1));
-            updateUser(accountName);
+            balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
+            replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
+            
+            serviceReply(replyMessage,ip,port);
+            updateUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
 
         }
         else {
-            serviceReply("Sorry, you don't have enough "+fromCurrency+" to convert to"+toCurrency);
+        	replyMessage ="Sorry, you don't have enough "+fromCurrency+" to convert to"+toCurrency;
+        	serviceReply(replyMessage,ip,port);
         }
+        }
+        
 
     }
-    public void serviceReply(String message) {
+    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port) throws IOException {
+    	int i;
+    	String replyMessage;
+    	LocalTime time = LocalTime.now().plusSeconds(interval);
+    	MonitorInfo monitorAccount= new MonitorInfo(accountNum,time,ip,port);
+    	if(monitorList.isEmpty()) {
+    		monitorList.add(monitorAccount);
+    	}
+    	else{
+    		for(i=0;i<monitorList.size();i++) {
+    			if(monitorList.get(i).getAccountNum()==accountNum) {
+    				monitorList.get(i).setExpireTime(time);
+    				monitorList.get(i).setIP(ip);
+    				monitorList.get(i).setport(port);
+    				break;
+    			}
+    		}
+    		
+    		if(i==monitorList.size()) {
+    			monitorList.add(monitorAccount);
+    		}
+    	}
+    	replyMessage= "You have success register for monitor update";
+    	serviceReply(replyMessage,ip,port);
+    	updateUser(accountName+"has register for monitor update.");
+    	
+    	
+    
+    }
+    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
+    	DatagramSocket socket = null;
+    	System.out.println(message);
+    	byte[] replybuf=DataProcess.stringToBytes(message);
+    	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
+				port);
+		socket.send(reply);
+        
+
+    }
+
+    public void updateUser(String message)  throws IOException{
         System.out.println(message);
-
+        LocalTime time = LocalTime.now();
+        DatagramSocket socket=null;
+        byte[] updatebuf=DataProcess.stringToBytes(message);
+        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+        if(!monitorList.isEmpty()) {
+        	for(int i=0; i<monitorList.size();i++) {
+        		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			update.setAddress(monitorList.get(i).getIP());
+        			update.setPort(monitorList.get(i).getPort());
+        			socket.send(update);
+        		}
+        		else {
+        			monitorList.remove(i);
+        			i--;
+        		}
+        	}
+        }
+        
     }
 
-    public void updateUser(String message) {
-        System.out.println(message);
-    }
-
-    private int userVerification(int accountNum, String accountName, String password) {
+    private int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port) throws IOException {
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account number";
@@ -171,15 +240,15 @@ public class AccountService {
             }
         }
         if(i==accountList.size()) {
-            serviceReply(wrongAccountNum);
+            serviceReply(wrongAccountNum,ip,port);
             return -1;
         }
         else if(accountList.get(i).getAccountName() != accountName) {
-            serviceReply(wrongAccountName);
+            serviceReply(wrongAccountName,ip,port);
             return -1;
         }
         else if(accountList.get(i).getPasswd() != password) {
-            serviceReply(wrongPassword);
+            serviceReply(wrongPassword,ip,port);
             return -1;
         }
         else {
