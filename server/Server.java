@@ -14,7 +14,7 @@ import java.util.Queue;
 public class Server{
     private DatagramSocket socket;
     private boolean running;
-    private final int BUFFER_SIZE=128;
+    private final int BUFFER_SIZE=512;
     private byte[] buf = new byte[BUFFER_SIZE];
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;

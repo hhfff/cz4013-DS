@@ -8,6 +8,8 @@ class Marshalling:
         marshalled_data = bytearray()
         for item in data:
             marshalled_data += cls.toBytes(item)
+            #marshalled_data.extend(cls.toBytes(item))
+        print(marshalled_data.hex())
 
         return marshalled_data
 
@@ -39,8 +41,12 @@ class Marshalling:
         if isinstance(data,int):
             return struct.pack('>i', data)
         elif isinstance(data,float):
-            return struct.pack('>f', data)
+            return struct.pack('>d', data)
         elif isinstance(data,str):
+            print(data)
+            print(len(data))
+            print(struct.pack('>i', len(data)))
+            print(bytes(data.encode('utf-8')).hex())
             return struct.pack('>i', len(data)) + bytes(data.encode('utf-8'))
         else:
             raise Exception(f'Unsupported data type {type(data)} for marshalling')

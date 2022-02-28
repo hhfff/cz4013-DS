@@ -14,8 +14,6 @@ public class AccountService {
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
-
-
     public AccountService(){}
     public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port) throws IOException {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));

@@ -21,9 +21,9 @@ class Method(Enum):
         return entry
 
 class Currency(Enum):
-    CNY = 1
-    MYR = 2
-    SGD = 3
+    CNY = 0
+    MYR = 1
+    SGD = 2
 
 class Network(Enum):
     Request = 0
