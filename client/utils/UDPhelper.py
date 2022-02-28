@@ -3,7 +3,11 @@ class UDPSocket:
     # default UDP setting         
     client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM  ) 
     socket_bufer =  128
-
+    
+    # TODO
+    # 1. add request id
+    # 2. cache = []
+    # 3. 
     @classmethod
     def setServerAddress(cls,host ='127.0.0.1', port= 54088):
         cls.serverAddress = (host, port)
@@ -11,6 +15,8 @@ class UDPSocket:
     @classmethod
     def send_msg(cls, msg: bytearray):
         cls.client_socket.sendto(msg, cls.serverAddress)
+        # start timer
+        # listen_msg() # 
 
     @classmethod
     def listen_msg(cls):
