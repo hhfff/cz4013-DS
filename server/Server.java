@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class Server{
     private DatagramSocket socket;
@@ -17,7 +18,7 @@ public class Server{
     private byte[] buf = new byte[BUFFER_SIZE];
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
-
+    private Queue Q;
     public Server(){
         try {
             socket = new DatagramSocket(54088);
@@ -45,8 +46,8 @@ public class Server{
                 buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
 
 
-                processData(buf,datagramPacket.getAddress(),datagramPacket.getPort());
-
+                //processData(buf,datagramPacket.getAddress(),datagramPacket.getPort());
+                processData(buf,InetAddress.getLocalHost(),5688);
                 socket.receive(datagramPacket);
                 //System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
@@ -141,16 +142,26 @@ public class Server{
             );
         }else if(method==Method.MONITOR.getValue()){
             var data=DataProcess.unmarshalMonitor(buf,12);
-            int secs=(int) data.get("intervalTime");
-            System.out.println(secs);
+            accountService.registerMonitorUpdate(
+            		(int) data.get("acctNum"),
+                    (String) data.get("name"),
+                    (String) data.get("password"),
+                    (int) data.get("intervalTime"),
+                    ip,
+                    port
+            );
+           
         }else{
-            //todo write no such method reply
+                    	
+        	//todo write no such method reply
         }
 
 
     }
 
-
+public DatagramSocket getSocket() {
+	return this.socket;
+}
 
 
 }

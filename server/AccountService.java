@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteOrder;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class AccountService {
         accountList.add(newUser);
         replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
         serviceReply(replyMessage,ip,port);
-        updateUser(accountName+" has create a new account.");
+        monitorUser(accountName+" has create a new account.");
     }
 
     public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
@@ -45,7 +46,7 @@ public class AccountService {
         if(i!=-1) {
             accountList.remove(i);
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+"has closing his account");
+            monitorUser(accountName+"has closing his account");
         }
 
 
@@ -65,7 +66,7 @@ public class AccountService {
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+" deposit some money to account.");
+            monitorUser(accountName+" deposit some money to account.");
         }
 
 
@@ -91,7 +92,7 @@ public class AccountService {
                 accountList.get(i).getSaving().put(currency, balance);
                 replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
                 serviceReply(replyMessage,ip,port);
-                updateUser(accountName+" withdraw some money from account.");
+                monitorUser(accountName+" withdraw some money from account.");
             }
 
         }
@@ -109,7 +110,7 @@ public class AccountService {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+" check his account.");
+            monitorUser(accountName+" check his account.");
         }
 
     }
@@ -155,7 +156,7 @@ public class AccountService {
             replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
             
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
+            monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
 
         }
         else {
@@ -190,49 +191,18 @@ public class AccountService {
     	}
     	replyMessage= "You have success register for monitor update";
     	serviceReply(replyMessage,ip,port);
-    	updateUser(accountName+"has register for monitor update.");
+    	monitorUser(accountName+"has register for monitor update.");
     	
     	
     
     }
-    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
-    	DatagramSocket socket = null;
-    	System.out.println(message);
-    	byte[] replybuf=DataProcess.stringToBytes(message);
-    	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
-				port);
-		socket.send(reply);
-        
-
-    }
-
-    public void updateUser(String message)  throws IOException{
-        System.out.println(message);
-        LocalTime time = LocalTime.now();
-        DatagramSocket socket=null;
-        byte[] updatebuf=DataProcess.stringToBytes(message);
-        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
-        if(!monitorList.isEmpty()) {
-        	for(int i=0; i<monitorList.size();i++) {
-        		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
-        			update.setAddress(monitorList.get(i).getIP());
-        			update.setPort(monitorList.get(i).getPort());
-        			socket.send(update);
-        		}
-        		else {
-        			monitorList.remove(i);
-        			i--;
-        		}
-        	}
-        }
-        
-    }
-
+    
     private int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port) throws IOException {
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account number";
         String wrongPassword= "Sorry, you have enter the wrong password";
+        String userPassed = "User verification success";
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
                 //currentAccount=accountList.get(i);
@@ -252,10 +222,52 @@ public class AccountService {
             return -1;
         }
         else {
+        	serviceReply(userPassed,ip,port);
             return i;
         }
 
     }
+    
+    
+    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
+    	DatagramSocket socket = new DatagramSocket(54089);
+    	System.out.println(message);
+    	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+    	//byte[] replyResult=DataProcess
+    	byte[] replybuf=DataProcess.stringToBytes(message);
+    	
+    	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
+				port);
+		socket.send(reply);
+    
+
+    }
+
+    public void monitorUser(String message)  throws IOException{
+        System.out.println(message);
+        LocalTime time = LocalTime.now();
+        DatagramSocket socket=new DatagramSocket(54090);
+        byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+        byte[] updatebuf=DataProcess.stringToBytes(message);
+        
+        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+        if(!monitorList.isEmpty()) {
+        	for(int i=0; i<monitorList.size();i++) {
+        		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			update.setAddress(monitorList.get(i).getIP());
+        			update.setPort(monitorList.get(i).getPort());
+        			socket.send(update);
+        		}
+        		else {
+        			monitorList.remove(i);
+        			i--;
+        		}
+        	}
+        }
+        
+    }
+
+
 
     public int getAccountNumber() {
         return accountNumber;
