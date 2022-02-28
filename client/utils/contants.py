@@ -26,5 +26,5 @@ class Currency(Enum):
     SGD = 3
 
 class Network(Enum):
-    Request = 1
-    Reply = 2
+    Request = 0
+    Reply = 1

@@ -1,17 +1,73 @@
+from xmlrpc.client import Boolean
+from utils import protocol,contants
+
 def create_account_service():
-    print("create_account")
+    while True:
+        accName = input("Please an account name:")
+        pw = input("Please enter your password:")
+        re_pw = input("Please re-enter your password:")
+        if pw == re_pw:
+            protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accName,pw))
+
+            succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
+
+            if succ is False:
+                print(msg)
+                return False
+            else:
+                return True
+        else:
+            print("Passwords does not match. Please re-enter all details.")
+
 
 def close_account_service():
-    print("close_account")
+    while not login_service():
+        pass
+    while True:
+        confirm  = input("Are you sure you want to close current logged in account:")
+        if confirm:
+            protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,())
+
+            succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
+
+            if succ is False:
+                print(msg)
+                return False
+            else:
+                return True
+
+        else:
+            return True
+            
+    
 
 def deposite_service():
-    print("deposite")
+    login_service()
 
 def withdraw_service():
-    print("withdraw")
+    login_service()
+    
 def view_balance_service():
-    print("view balance")
+    login_service()
+
 def currency_exchange_service():
-    print("currency_exchange")
+    login_service()
+
 def monitor_service():
-    print("monitor")
+    login_service()
+
+def login_service():
+    accNum = input("Please enter your bank account number:")
+    accName = input("Please enter your account name:")
+    pw = input("Please enter your password:")
+    protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accNum,accName,pw))
+
+    succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
+    
+    if succ is False:
+        print(msg)
+        return False
+    else:
+        return True
+
+
