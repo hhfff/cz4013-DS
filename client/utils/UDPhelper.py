@@ -20,7 +20,6 @@ class UDPSocket:
 
     @classmethod
     def listen_msg(cls):
-
         while True:
             data, addr = cls.client_socket.recvfrom(cls.socket_bufer) 
             return data, addr                       

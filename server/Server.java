@@ -32,24 +32,25 @@ public class Server{
         while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
             try {
-                //testing code
-                int messsageType=0;
-                int requestITempD=0;
-                int methodTemp=1;//1-7
-                String pass="pass";
-                int currFromType=0;
-                int currToType;
-                double money=1000.0;
-                String name="haskel";
-                int acctNUm=1;
+//                //testing code
+//                int messsageType=0;
+//                int requestITempD=0;
+//                int methodTemp=1;//1-7
+//                String pass="pass";
+//                int currFromType=0;
+//                int currToType;
+//                double money=1000.0;
+//                String name="haskel";
+//                int acctNUm=1;
 
-                buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
+//                buf=DataProcess.marshal(messsageType,requestITempD,methodTemp,pass,currFromType,money,name.length(),name);
 
 
                 //processData(buf,datagramPacket.getAddress(),datagramPacket.getPort());
-                processData(buf,InetAddress.getLocalHost(),5688);
                 socket.receive(datagramPacket);
-                //System.out.println(data(buf));
+                buf = datagramPacket.getData();
+                processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
+//                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
 
 

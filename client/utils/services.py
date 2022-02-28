@@ -55,6 +55,12 @@ def currency_exchange_service():
 
 def monitor_service():
     login_service()
+    while input()!="X":
+        pass
+        # T =2
+        # listening SOCKET
+        # REcieve
+        
 
 def login_service():
     accNum = input("Please enter your bank account number:")

@@ -6,12 +6,18 @@ from utils.UDPhelper import UDPSocket
 from utils.marshalling import Marshalling
 from utils.contants import Method,Network
 
+request_id = 0
+reply_id = 0
+
 def setServerAddress(host,port):
     UDPSocket.setServerAddress(host,port)
 
+# add request id
 def sendRequest(methodCode:Method, dataTuple:Tuple):
-    marshalled_data = Marshalling.marshall((Network.Request.value,methodCode.value,*dataTuple))
+    # request_id += 1
+    marshalled_data = Marshalling.marshall((3,113,methodCode.value,*dataTuple))
     UDPSocket.send_msg(marshalled_data)
+
 
 
 def waitForReply(methodCode:Method, paraTypeOrder:Tuple):
