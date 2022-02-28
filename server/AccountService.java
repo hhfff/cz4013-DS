@@ -30,7 +30,7 @@ public class AccountService {
         accountList.add(newUser);
         replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
         serviceReply(replyMessage,ip,port);
-        updateUser(accountName+" has create a new account.");
+        monitorUser(accountName+" has create a new account.");
     }
 
     public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
@@ -46,7 +46,7 @@ public class AccountService {
         if(i!=-1) {
             accountList.remove(i);
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+"has closing his account");
+            monitorUser(accountName+"has closing his account");
         }
 
 
@@ -66,7 +66,7 @@ public class AccountService {
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+" deposit some money to account.");
+            monitorUser(accountName+" deposit some money to account.");
         }
 
 
@@ -92,7 +92,7 @@ public class AccountService {
                 accountList.get(i).getSaving().put(currency, balance);
                 replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
                 serviceReply(replyMessage,ip,port);
-                updateUser(accountName+" withdraw some money from account.");
+                monitorUser(accountName+" withdraw some money from account.");
             }
 
         }
@@ -110,7 +110,7 @@ public class AccountService {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+" check his account.");
+            monitorUser(accountName+" check his account.");
         }
 
     }
@@ -156,7 +156,7 @@ public class AccountService {
             replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
             
             serviceReply(replyMessage,ip,port);
-            updateUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
+            monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
 
         }
         else {
@@ -191,7 +191,7 @@ public class AccountService {
     	}
     	replyMessage= "You have success register for monitor update";
     	serviceReply(replyMessage,ip,port);
-    	updateUser(accountName+"has register for monitor update.");
+    	monitorUser(accountName+"has register for monitor update.");
     	
     	
     
@@ -230,7 +230,7 @@ public class AccountService {
     
     
     public void serviceReply(String message, InetAddress ip, int port) throws IOException {
-    	DatagramSocket socket = null;
+    	DatagramSocket socket = new DatagramSocket(54089);
     	System.out.println(message);
     	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
@@ -239,14 +239,14 @@ public class AccountService {
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
 				port);
 		socket.send(reply);
-        
+    
 
     }
 
-    public void updateUser(String message)  throws IOException{
+    public void monitorUser(String message)  throws IOException{
         System.out.println(message);
         LocalTime time = LocalTime.now();
-        DatagramSocket socket=null;
+        DatagramSocket socket=new DatagramSocket(54090);
         byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
         byte[] updatebuf=DataProcess.stringToBytes(message);
         

@@ -5,7 +5,9 @@ public enum Method {
     WITHDRAW(4),
     VIEW_BALANCE(5),
     CURRENCY_EXCHANGE(6),
-    MONITOR(7);
+    MONITOR(7),
+	USER_VERIFICATION(8);
+
     private int value;
     private Method(int value){
         this.value=value;
