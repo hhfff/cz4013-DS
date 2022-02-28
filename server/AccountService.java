@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.nio.ByteOrder;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
@@ -195,44 +196,13 @@ public class AccountService {
     	
     
     }
-    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
-    	DatagramSocket socket = null;
-    	System.out.println(message);
-    	byte[] replybuf=DataProcess.stringToBytes(message);
-    	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
-				port);
-		socket.send(reply);
-        
-
-    }
-
-    public void updateUser(String message)  throws IOException{
-        System.out.println(message);
-        LocalTime time = LocalTime.now();
-        DatagramSocket socket=null;
-        byte[] updatebuf=DataProcess.stringToBytes(message);
-        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
-        if(!monitorList.isEmpty()) {
-        	for(int i=0; i<monitorList.size();i++) {
-        		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
-        			update.setAddress(monitorList.get(i).getIP());
-        			update.setPort(monitorList.get(i).getPort());
-        			socket.send(update);
-        		}
-        		else {
-        			monitorList.remove(i);
-        			i--;
-        		}
-        	}
-        }
-        
-    }
-
+    
     private int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port) throws IOException {
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account number";
         String wrongPassword= "Sorry, you have enter the wrong password";
+        String userPassed = "User verification success";
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
                 //currentAccount=accountList.get(i);
@@ -252,10 +222,52 @@ public class AccountService {
             return -1;
         }
         else {
+        	serviceReply(userPassed,ip,port);
             return i;
         }
 
     }
+    
+    
+    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
+    	DatagramSocket socket = null;
+    	System.out.println(message);
+    	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+    	//byte[] replyResult=DataProcess
+    	byte[] replybuf=DataProcess.stringToBytes(message);
+    	
+    	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
+				port);
+		socket.send(reply);
+        
+
+    }
+
+    public void updateUser(String message)  throws IOException{
+        System.out.println(message);
+        LocalTime time = LocalTime.now();
+        DatagramSocket socket=null;
+        byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+        byte[] updatebuf=DataProcess.stringToBytes(message);
+        
+        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+        if(!monitorList.isEmpty()) {
+        	for(int i=0; i<monitorList.size();i++) {
+        		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			update.setAddress(monitorList.get(i).getIP());
+        			update.setPort(monitorList.get(i).getPort());
+        			socket.send(update);
+        		}
+        		else {
+        			monitorList.remove(i);
+        			i--;
+        		}
+        	}
+        }
+        
+    }
+
+
 
     public int getAccountNumber() {
         return accountNumber;
