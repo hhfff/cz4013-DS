@@ -9,7 +9,6 @@ class Marshalling:
         for item in data:
             marshalled_data += cls.toBytes(item)
             #marshalled_data.extend(cls.toBytes(item))
-        print(marshalled_data.hex())
 
         return marshalled_data
 
@@ -43,10 +42,6 @@ class Marshalling:
         elif isinstance(data,float):
             return struct.pack('>d', data)
         elif isinstance(data,str):
-            print(data)
-            print(len(data))
-            print(struct.pack('>i', len(data)))
-            print(bytes(data.encode('utf-8')).hex())
             return struct.pack('>i', len(data)) + bytes(data.encode('utf-8'))
         else:
             raise Exception(f'Unsupported data type {type(data)} for marshalling')
