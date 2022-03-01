@@ -15,7 +15,7 @@ public class AccountService {
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
     public AccountService(){}
-    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port) throws IOException {
+    public String createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port) throws IOException {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
@@ -29,6 +29,7 @@ public class AccountService {
         replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
         serviceReply(replyMessage,ip,port);
         monitorUser(accountName+" has create a new account.");
+        return replyMessage;
     }
 
     public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {

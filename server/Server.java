@@ -19,7 +19,11 @@ public class Server{
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
     private Queue Q;
+
+    //maybe requestId with ArrayList is better, but since is small app, can just loop the list
+    private ArrayList<History> histories;
     public Server(){
+        histories=new ArrayList<>();
         try {
             socket = new DatagramSocket(54088);
             accountService=new AccountService();
@@ -49,6 +53,7 @@ public class Server{
                 //processData(buf,datagramPacket.getAddress(),datagramPacket.getPort());
                 socket.receive(datagramPacket);
                 buf = datagramPacket.getData();
+
                 processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
 //                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
@@ -81,83 +86,106 @@ public class Server{
         System.out.println("msgtype:  "+msgType);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
         System.out.println("reqID:  "+requestID);
+
+
+        //checking history
+        for(History history: histories){
+            if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
+                //found in history, just reply
+                byte[] data=DataProcess.marshal(history.getReplyMessage());
+                socket.send(new DatagramPacket(data,data.length,ip,port));
+                return ;
+            }
+        }
+        String msg=null;
         //todo  write error catch
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
 
-        //todo need to catch those argument order error?
-        if(method==Method.CREATE_ACCOUNT.getValue()){
-            var data=DataProcess.unmarshalCreateAccount(buf,12);
-            accountService.createUserAccount(
-                    (String)data.get("name"),
-                    (String) data.get("password"),
-                    (Currency) data.get("currencyType"),
-                    (double) data.get("amt"),
-                    ip,
-                    port
-            );
-        }else if(method==Method.CLOSE_ACCOUNT.getValue()){
-            var data=DataProcess.unmarshalCloseAccount(buf,12);
-            accountService.closingUserAccount(
-                    (int) data.get("acctNum"),
-                    (String) data.get("name"),
-                    (String) data.get("password"),
-                    ip,
-                    port
+        try{
+            //todo need to catch those argument order error?
+            if(method==Method.CREATE_ACCOUNT.getValue()){
+                var data=DataProcess.unmarshalCreateAccount(buf,12);
+                msg=accountService.createUserAccount(
+                        (String)data.get("name"),
+                        (String) data.get("password"),
+                        (Currency) data.get("currencyType"),
+                        (double) data.get("amt"),
+                        ip,
+                        port
+                );
+            }else if(method==Method.CLOSE_ACCOUNT.getValue()){
+                var data=DataProcess.unmarshalCloseAccount(buf,12);
+                accountService.closingUserAccount(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        ip,
+                        port
 
-            );
-        }else if(method==Method.DEPOSITE.getValue()){
-            var data=DataProcess.unmarshalDeposite(buf,12);
-            accountService.depositToAccount(
-                    (int) data.get("acctNum"),
-                    (String) data.get("name"),
-                    (String) data.get("password"),
-                    (Currency) data.get("currencyType"),
-                    (double) data.get("amt"),
-                    ip,
-                    port
-            );
+                );
+            }else if(method==Method.DEPOSITE.getValue()){
+                var data=DataProcess.unmarshalDeposite(buf,12);
+                accountService.depositToAccount(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        (Currency) data.get("currencyType"),
+                        (double) data.get("amt"),
+                        ip,
+                        port
+                );
 
-        }else if(method==Method.WITHDRAW.getValue()){
-            var data=DataProcess.unmarshalWithdraw(buf,12);
-            accountService.wthdrawFromAccount(
-                    (int) data.get("acctNum"),
-                    (String) data.get("name"),
-                    (String) data.get("password"),
-                    (Currency) data.get("currencyType"),
-                    (double) data.get("amt"),
-                    ip,
-                    port
-            );
-        }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
-            var data=DataProcess.unmarshalViewBalance(buf,12);
-            accountService.currencyExchange(
-                    (int) data.get("acctNum"),
-                    (String) data.get("name"),
-                    (String) data.get("password"),
-                    (Currency) data.get("currencyFromType"),
-                    (Currency) data.get("currencyToType"),
-                    (double) data.get("amt"),
-                    ip,
-                    port
+            }else if(method==Method.WITHDRAW.getValue()){
+                var data=DataProcess.unmarshalWithdraw(buf,12);
+                accountService.wthdrawFromAccount(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        (Currency) data.get("currencyType"),
+                        (double) data.get("amt"),
+                        ip,
+                        port
+                );
+            }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+                var data=DataProcess.unmarshalViewBalance(buf,12);
+                accountService.currencyExchange(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        (Currency) data.get("currencyFromType"),
+                        (Currency) data.get("currencyToType"),
+                        (double) data.get("amt"),
+                        ip,
+                        port
 
-            );
-        }else if(method==Method.MONITOR.getValue()){
-            var data=DataProcess.unmarshalMonitor(buf,12);
-            accountService.registerMonitorUpdate(
-            		(int) data.get("acctNum"),
-                    (String) data.get("name"),
-                    (String) data.get("password"),
-                    (int) data.get("intervalTime"),
-                    ip,
-                    port
-            );
-           
-        }else{
-                    	
-        	//todo write no such method reply
+                );
+            }else if(method==Method.MONITOR.getValue()){
+                var data=DataProcess.unmarshalMonitor(buf,12);
+                accountService.registerMonitorUpdate(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        (int) data.get("intervalTime"),
+                        ip,
+                        port
+                );
+
+            }else{
+
+                //todo write no such method reply
+            }
+            if(msg!=null) histories.add(new History(requestID,port,ip,msg));
+            else msg="error in server process";
+
+
+            byte[] data=DataProcess.marshal(msg);
+            socket.send(new DatagramPacket(data,data.length,ip,port));
+
+        }catch (Exception e){
+            msg="Error on request param";
+            byte[] data=DataProcess.marshal(msg);
+            socket.send(new DatagramPacket(data,data.length,ip,port));
         }
-
-
     }
 
 public DatagramSocket getSocket() {
