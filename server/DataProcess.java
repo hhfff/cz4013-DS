@@ -145,8 +145,6 @@ public class DataProcess {
         int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
         startByte+=length;
 
-        System.out.println(nameLength);
-        printByteToHex(buf);
 
 
 

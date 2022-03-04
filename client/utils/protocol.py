@@ -15,7 +15,7 @@ def setServerAddress(host,port):
 # add request id
 def sendRequest(methodCode:Method, dataTuple:Tuple):
     # request_id += 1
-    marshalled_data = Marshalling.marshall((3,113,methodCode.value,*dataTuple))
+    marshalled_data = Marshalling.marshall((3,1,methodCode.value,*dataTuple))
     UDPSocket.send_msg(marshalled_data)
 
 

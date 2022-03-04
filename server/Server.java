@@ -83,17 +83,15 @@ public class Server{
     private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
         //msg type(4 byte, 0 or 1), request id(from client), method type
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
-        System.out.println("msgtype:  "+msgType);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
-        System.out.println("reqID:  "+requestID);
-
-
+        System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + "request id: "+requestID);
         //checking history
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
                 //found in history, just reply
                 byte[] data=DataProcess.marshal(history.getReplyMessage());
                 socket.send(new DatagramPacket(data,data.length,ip,port));
+                System.out.println("found in history");
                 return ;
             }
         }
@@ -188,9 +186,9 @@ public class Server{
         }
     }
 
-public DatagramSocket getSocket() {
-	return this.socket;
-}
+    public DatagramSocket getSocket() {
+        return this.socket;
+    }
 
 
 }

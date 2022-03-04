@@ -3,6 +3,7 @@ class UDPSocket:
     # default UDP setting         
     client_socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM  ) 
     socket_bufer =  128
+    client_socket.bind(("0.0.0.0",12345))
     
     # TODO
     # 1. add request id
