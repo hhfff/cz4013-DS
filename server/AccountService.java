@@ -208,25 +208,22 @@ public class AccountService {
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
                 //currentAccount=accountList.get(i);
-                break;
+                if(accountList.get(i).getAccountName() != accountName) {
+                    serviceReply(0,wrongAccountName,ip,port,replyPacketList);
+                    return -1;
+                }
+                else if(accountList.get(i).getPasswd() != password) {
+                    serviceReply(0,wrongPassword,ip,port,replyPacketList);
+                    return -1;
+                }
+                else {
+                    serviceReply(1,userPassed,ip,port,replyPacketList);
+                    return i;
+                }
             }
         }
-        if(i==accountList.size()) {
-            serviceReply(0,wrongAccountNum,ip,port,replyPacketList);
-            return -1;
-        }
-        else if(accountList.get(i).getAccountName() != accountName) {
-            serviceReply(0,wrongAccountName,ip,port,replyPacketList);
-            return -1;
-        }
-        else if(accountList.get(i).getPasswd() != password) {
-            serviceReply(0,wrongPassword,ip,port,replyPacketList);
-            return -1;
-        }
-        else {
-        	serviceReply(1,userPassed,ip,port,replyPacketList);
-            return i;
-        }
+        serviceReply(0,wrongAccountNum,ip,port,replyPacketList);
+        return -1;
 
     }
     
