@@ -14,10 +14,8 @@ public class AccountService {
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
-
-
     public AccountService(){}
-    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port) throws IOException {
+    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
@@ -29,11 +27,12 @@ public class AccountService {
         Account newUser = new Account(accountNumber,accountName,password,saving);
         accountList.add(newUser);
         replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
-        serviceReply(replyMessage,ip,port);
-        monitorUser(accountName+" has create a new account.");
+        serviceReply(replyMessage,ip,port,replyPacketList);
+        monitorUser(accountName+" has create a new account.",replyPacketList);
+        //return replyMessage;
     }
 
-    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
+    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
@@ -41,18 +40,18 @@ public class AccountService {
 
         String replyMessage= "Your account has been close successfully";
 
-        i = userVerification(accountNum,accountName,password, ip, port);
+        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
 
         if(i!=-1) {
             accountList.remove(i);
-            serviceReply(replyMessage,ip,port);
-            monitorUser(accountName+"has closing his account");
+            serviceReply(replyMessage,ip,port,replyPacketList);
+            monitorUser(accountName+"has closing his account",replyPacketList);
         }
 
 
     }
 
-    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port) throws IOException {
+    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
@@ -60,69 +59,69 @@ public class AccountService {
 
         String replyMessage="";
 
-        i = userVerification(accountNum,accountName,password, ip, port);
+        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
         if(i!=-1) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
-            serviceReply(replyMessage,ip,port);
-            monitorUser(accountName+" deposit some money to account.");
+            serviceReply(replyMessage,ip,port,replyPacketList);
+            monitorUser(accountName+" deposit some money to account.",replyPacketList);
         }
 
 
 
     }
 
-    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port) throws IOException {
+    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
         //Account currentAccount= new Account();
 
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port);
+        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
         if(i!=-1) {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
             	replyMessage="Sorry, you don't have enough balance to withdraw "+currency.toString()+" : "+amount+".";
-            	serviceReply(replyMessage,ip,port);
+            	serviceReply(replyMessage,ip,port,replyPacketList);
             }
             else {
                 balance = (double) accountList.get(i).getSaving().get(currency)-amount;
                 accountList.get(i).getSaving().put(currency, balance);
                 replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
-                serviceReply(replyMessage,ip,port);
-                monitorUser(accountName+" withdraw some money from account.");
+                serviceReply(replyMessage,ip,port,replyPacketList);
+                monitorUser(accountName+" withdraw some money from account.",replyPacketList);
             }
 
         }
 
     }
 
-    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port) throws IOException {
+    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
         String balanceInfo;
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port);
+        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
         if(i != -1) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
-            serviceReply(replyMessage,ip,port);
-            monitorUser(accountName+" check his account.");
+            serviceReply(replyMessage,ip,port,replyPacketList);
+            monitorUser(accountName+" check his account.",replyPacketList);
         }
 
     }
 
-    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port ) throws IOException {
+    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws IOException {
         System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
 
         int i;
         double newAmount;
         String balanceInfo;
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port);
+        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
         if(i!=-1) {
         	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
             switch(fromCurrency) {
@@ -155,19 +154,19 @@ public class AccountService {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
             
-            serviceReply(replyMessage,ip,port);
-            monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString());
+            serviceReply(replyMessage,ip,port,replyPacketList);
+            monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString(),replyPacketList);
 
         }
         else {
         	replyMessage ="Sorry, you don't have enough "+fromCurrency+" to convert to"+toCurrency;
-        	serviceReply(replyMessage,ip,port);
+        	serviceReply(replyMessage,ip,port,replyPacketList);
         }
         }
         
 
     }
-    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port) throws IOException {
+    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
     	int i;
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
@@ -190,14 +189,14 @@ public class AccountService {
     		}
     	}
     	replyMessage= "You have success register for monitor update";
-    	serviceReply(replyMessage,ip,port);
-    	monitorUser(accountName+"has register for monitor update.");
+    	serviceReply(replyMessage,ip,port,replyPacketList);
+    	monitorUser(accountName+"has register for monitor update.",replyPacketList);
     	
     	
     
     }
     
-    private int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port) throws IOException {
+    private int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account number";
@@ -210,27 +209,27 @@ public class AccountService {
             }
         }
         if(i==accountList.size()) {
-            serviceReply(wrongAccountNum,ip,port);
+            serviceReply(wrongAccountNum,ip,port,replyPacketList);
             return -1;
         }
         else if(accountList.get(i).getAccountName() != accountName) {
-            serviceReply(wrongAccountName,ip,port);
+            serviceReply(wrongAccountName,ip,port,replyPacketList);
             return -1;
         }
         else if(accountList.get(i).getPasswd() != password) {
-            serviceReply(wrongPassword,ip,port);
+            serviceReply(wrongPassword,ip,port,replyPacketList);
             return -1;
         }
         else {
-        	serviceReply(userPassed,ip,port);
+        	serviceReply(userPassed,ip,port,replyPacketList);
             return i;
         }
 
     }
     
     
-    public void serviceReply(String message, InetAddress ip, int port) throws IOException {
-    	DatagramSocket socket = new DatagramSocket(54089);
+    public void serviceReply(String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    	DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
     	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
@@ -238,15 +237,14 @@ public class AccountService {
     	
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
 				port);
-		socket.send(reply);
-    
-
+		//socket.send(reply);
+		replyPacketList.add(reply);
     }
 
-    public void monitorUser(String message)  throws IOException{
+    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws IOException{
         System.out.println(message);
         LocalTime time = LocalTime.now();
-        DatagramSocket socket=new DatagramSocket(54090);
+        DatagramSocket socket=new DatagramSocket(Server.getServerPort());
         byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
         byte[] updatebuf=DataProcess.stringToBytes(message);
         
@@ -256,7 +254,8 @@ public class AccountService {
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
         			update.setAddress(monitorList.get(i).getIP());
         			update.setPort(monitorList.get(i).getPort());
-        			socket.send(update);
+        			//socket.send(update);
+        			replyPacketList.add(update);
         		}
         		else {
         			monitorList.remove(i);

@@ -8,6 +8,7 @@ class Marshalling:
         marshalled_data = bytearray()
         for item in data:
             marshalled_data += cls.toBytes(item)
+            #marshalled_data.extend(cls.toBytes(item))
 
         return marshalled_data
 
@@ -39,7 +40,7 @@ class Marshalling:
         if isinstance(data,int):
             return struct.pack('>i', data)
         elif isinstance(data,float):
-            return struct.pack('>f', data)
+            return struct.pack('>d', data)
         elif isinstance(data,str):
             return struct.pack('>i', len(data)) + bytes(data.encode('utf-8'))
         else:

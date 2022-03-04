@@ -30,9 +30,9 @@ class Method(Enum):
     # make enum support multiple attributes: https://stackoverflow.com/questions/12680080/python-enums-with-attributes 
 
 class Currency(Enum):
-    CNY = 1
-    MYR = 2
-    SGD = 3
+    CNY = 0
+    MYR = 1
+    SGD = 2
 
 class Network(Enum):
     Request = 0

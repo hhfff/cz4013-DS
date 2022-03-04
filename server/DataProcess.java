@@ -130,6 +130,8 @@ public class DataProcess {
     // passwd(4 byte, 4 char),currency type(int, 4 byte), init_amount(double), name_length(int 4 byte), name(string variable)
     public static HashMap<String,Object> unmarshalCreateAccount(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -143,6 +145,9 @@ public class DataProcess {
         int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
         startByte+=length;
 
+
+
+
         hashMap.put("name",bytesToString(buf,startByte,nameLength));
 
         return hashMap;
@@ -151,6 +156,8 @@ public class DataProcess {
     //passwd(4 byte, 4 char), acct number(int), name(string variable)
     public static HashMap<String,Object> unmarshalCloseAccount(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -168,6 +175,8 @@ public class DataProcess {
     //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
     public static HashMap<String,Object> unmarshalDeposite(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -191,6 +200,8 @@ public class DataProcess {
     //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
     public static HashMap<String,Object> unmarshalWithdraw(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -214,6 +225,8 @@ public class DataProcess {
     //passwd(4 byte, 4 char), acct number(int),name(string variable)
     public static HashMap<String,Object> unmarshalViewBalance(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -232,6 +245,8 @@ public class DataProcess {
     //passwd(4 byte, 4 char), acct number(int), currency from type(int),currency to type(int), amount(double),amt(double),name(string variable)
     public static HashMap<String,Object> unmarshalCurrencyExchange(byte[] buf,int startByte){
         HashMap<String,Object> hashMap=new HashMap<>();
+        int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
+        startByte+=length;
 
         hashMap.put("password",bytesToString(buf,startByte,length));
         startByte+=length;
@@ -246,7 +261,6 @@ public class DataProcess {
 
         hashMap.put("amt",bytesToDouble(buf,startByte,ByteOrder.BIG_ENDIAN));
         startByte+=length*2;
-
 
         int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
         startByte+=length;
