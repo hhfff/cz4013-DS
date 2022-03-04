@@ -229,11 +229,12 @@ public class AccountService {
     
     
     public void serviceReply(String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
-    	DatagramSocket socket = new DatagramSocket(Server.getServerPort());
+    	//DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
-    	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+    	//byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
-    	byte[] replybuf=DataProcess.stringToBytes(message);
+    	//byte[] replybuf=DataProcess.stringToBytes(message);
+        byte[] replybuf=DataProcess.marshal(1,1,message.length(),message);
     	
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
 				port);
@@ -244,10 +245,12 @@ public class AccountService {
     public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws IOException{
         System.out.println(message);
         LocalTime time = LocalTime.now();
-        DatagramSocket socket=new DatagramSocket(Server.getServerPort());
-        byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
-        byte[] updatebuf=DataProcess.stringToBytes(message);
-        
+        //DatagramSocket socket=new DatagramSocket(Server.getServerPort());
+        //byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
+        //byte[] updatebuf=DataProcess.stringToBytes(message);
+
+        //reply id, status, message length, message
+        byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);
         DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
         if(!monitorList.isEmpty()) {
         	for(int i=0; i<monitorList.size();i++) {

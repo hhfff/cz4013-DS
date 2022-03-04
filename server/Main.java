@@ -5,13 +5,13 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.print("========int========");
+       /* System.out.print("========int========");
         testInt();
         System.out.println("========double========");
         testDouble();
         System.out.println("========start server========");
         testStr();
-        System.out.println("========start server========");
+        System.out.println("========start server========");*/
 
 
         

@@ -23,7 +23,7 @@ def promptServerAddress():
         else:
             if ans == 'y':
                 serverHost = input("Enter Server Host:").lower()
-                serverPort = input("Enter Server Port:").lower()
+                serverPort = int(input("Enter Server Port:").lower())  # you forget to convert string to int, port is integer type
                 protocol.setServerAddress(serverHost,serverPort)
             else:
                 protocol.setServerAddress(contants.SERVER_HOST,contants.SERVER_HOST)

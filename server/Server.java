@@ -25,6 +25,7 @@ public class Server{
     private ArrayList<History> histories;
     public Server(){
         histories=new ArrayList<>();
+        replyPacketList=new ArrayList<>();
         try {
             socket = new DatagramSocket(54088);
             accountService=new AccountService();
@@ -58,9 +59,6 @@ public class Server{
                 processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
 //                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
-
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,19 +93,19 @@ public class Server{
         //msg type(4 byte, 0 or 1), request id(from client), method type
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
-        System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + "request id: "+requestID);
+        System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID);
         //checking history
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
                 //found in history, just reply
-                byte[] data=DataProcess.marshal(history.getReplyMessage());
                 //socket.send(new DatagramPacket(data,data.length,ip,port));
-                replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(history.getReplyPacket());
+                System.out.println("found in history");
                 sendPacket();
                 return ;
             }
         }
-        String msg=null;
+        //String msg=null;
         //todo  write error catch
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
 
@@ -160,8 +158,21 @@ public class Server{
                         port,
                         replyPacketList
                 );
-            }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+            }else if(method==Method.VIEW_BALANCE.getValue()){
                 var data=DataProcess.unmarshalViewBalance(buf,12);
+                accountService.viewBalance(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        ip,
+                        port,
+                        replyPacketList
+                );
+
+
+            }
+            else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+                var data=DataProcess.unmarshalCurrencyExchange(buf,12);
                 accountService.currencyExchange(
                         (int) data.get("acctNum"),
                         (String) data.get("name"),
@@ -190,17 +201,19 @@ public class Server{
 
                 //todo write no such method reply
             }
-            if(msg!=null) histories.add(new History(requestID,port,ip,msg));
-            else msg="error in server process";
-
-
-            byte[] data=DataProcess.marshal(msg);
-            //socket.send(new DatagramPacket(data,data.length,ip,port));
-            replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+            //if success means first item in array list is message
+            if(!replyPacketList.isEmpty()) histories.add(new History(requestID,port,ip,replyPacketList.get(0)));
+            else {
+                String msg="error in server process";
+                byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
+                //socket.send(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+            }
 
         }catch (Exception e){
-            msg="Error on request param";
-            byte[] data=DataProcess.marshal(msg);
+            e.printStackTrace();
+            String msg="Error on request param";
+            byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
             //socket.send(new DatagramPacket(data,data.length,ip,port));
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
