@@ -5,12 +5,12 @@ def _login_service():
     accNum = input("Please enter your bank account number:")
     accName = input("Please enter your account name:")
     pw = input("Please enter your password:")
-    succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accNum,accName,pw),(int,str))
+    succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(accNum,accName,pw),(int,str))
 
     if succ:
         print(msg[1])
         if msg[0] == 1:
-            return True, (accNum,accName,pw)
+            return True, (pw,accNum,accName)
         else:            
             return False
     else:
@@ -23,13 +23,15 @@ def create_account_service():
         pw = input("Please enter your password:")
         re_pw = input("Please re-enter your password:")
         if pw == re_pw:
+            # TODO
+            # only 4 characters
             print(f"{contants.Currency.SGD.value} | Singapore dollar")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
             print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")            
             while True:
                 try:
                     curreny_type_input = input(f"Please select initial curreny type:")
-                    curreny_type = contants.Currency(curreny_type_input)
+                    curreny_type = contants.Currency(int(curreny_type_input))
                 except ValueError:
                     print("Invalid type! Please Try again.")
                     continue
@@ -40,12 +42,12 @@ def create_account_service():
                 except ValueError:
                     print("Invalid input! Please Try again.")
                     continue
-            succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accName,pw,curreny_type.value,curreny_amt),(int,str))             
+            succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,curreny_type.value,curreny_amt,accName),(int,str))             
             if succ:
+                print("Server:",msg[1])
                 if msg[0] == 1:
                     return True
-                else:
-                    print(msg[1])
+                else:                    
                     return False
             else:
 
@@ -62,7 +64,7 @@ def close_account_service():
     if confirm:
         succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,user_cred)        
         if succ:
-            print(msg[1])
+            print("Server:",msg[1])
             if msg[0] == 1:
                 return True
             else:                
@@ -94,9 +96,9 @@ def deposite_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ, msg = protocol.sendRequest(contants.Method.DEPOSITE,(*user_cred,curreny_type.value,curreny_amt),(int,str)) 
+    succ, msg = protocol.sendRequest(contants.Method.DEPOSITE,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print(msg[1])
+        print("Server:",msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -125,9 +127,9 @@ def withdraw_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ, msg = protocol.sendRequest(contants.Method.WITHDRAW,(*user_cred,curreny_type.value,curreny_amt),(int,str)) 
+    succ, msg = protocol.sendRequest(contants.Method.WITHDRAW,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print(msg[1])
+        print("Server:",msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -140,9 +142,9 @@ def view_balance_service():
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
-    succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred)        
+    succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred,(int,str))      
     if succ:
-        print(msg[1])
+        print("Server:",msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -172,9 +174,9 @@ def currency_exchange_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ, msg = protocol.sendRequest(contants.Method.CURRENCY_EXCHANGE,(*user_cred,src_curreny_type.value,tar_curreny_type.value,curreny_amt),(int,str)) 
+    succ, msg = protocol.sendRequest(contants.Method.CURRENCY_EXCHANGE,(*user_cred[:-1],src_curreny_type.value,tar_curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print(msg[1])
+        print("Server:",msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -197,7 +199,7 @@ def monitor_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred,intervalTime,(int,str)))
+    succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred[:-1],intervalTime,user_cred[-1],(int,str)))
     return succ
         
 

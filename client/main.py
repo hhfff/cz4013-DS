@@ -26,7 +26,7 @@ def promptServerAddress():
                 serverPort = int(input("Enter Server Port:").lower())  # you forget to convert string to int, port is integer type
                 protocol.setServerAddress(serverHost,serverPort)
             else:
-                protocol.setServerAddress(contants.SERVER_HOST,contants.SERVER_HOST)
+                protocol.setServerAddress(contants.SERVER_HOST,contants.SERVER_PORT)
             break
 
 def selectService():

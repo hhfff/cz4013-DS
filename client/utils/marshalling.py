@@ -27,7 +27,6 @@ class Marshalling:
                 ptr +=4
             elif data_type is str:
                 length = struct.unpack('>i',buffer[ptr:ptr+4])[0]
-                print(length)
                 ptr +=4 
                 unmarshall_data.append(buffer[ptr:ptr+length].decode('utf-8'))
                 ptr +=length                
