@@ -234,7 +234,7 @@ public class AccountService {
     	//byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
     	//byte[] replybuf=DataProcess.stringToBytes(message);
-        byte[] replybuf=DataProcess.marshal(1,message.length(),message);
+        byte[] replybuf=DataProcess.marshal(1,1,message.length(),message);
     	
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
 				port);
@@ -248,7 +248,9 @@ public class AccountService {
         //DatagramSocket socket=new DatagramSocket(Server.getServerPort());
         //byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
         //byte[] updatebuf=DataProcess.stringToBytes(message);
-        byte[] updatebuf=DataProcess.marshal(1,message.length(),message);
+
+        //reply id, status, message length, message
+        byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);
         DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
         if(!monitorList.isEmpty()) {
         	for(int i=0; i<monitorList.size();i++) {

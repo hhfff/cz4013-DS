@@ -8,7 +8,8 @@ def create_account_service():
         re_pw = input("Please re-enter your password:")
         if pw == re_pw:
             protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,1,123.0,accName))
-            succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
+            #reply id, status, (message length)message
+            succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,int,str))
 
             if succ is False:
                 print(msg)

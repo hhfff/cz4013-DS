@@ -192,7 +192,7 @@ public class Server{
             if(!replyPacketList.isEmpty()) histories.add(new History(requestID,port,ip,replyPacketList.get(0)));
             else {
                 String msg="error in server process";
-                byte[] data=DataProcess.marshal(1,msg);
+                byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
                 //socket.send(new DatagramPacket(data,data.length,ip,port));
                 replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
             }
@@ -200,7 +200,7 @@ public class Server{
         }catch (Exception e){
             e.printStackTrace();
             String msg="Error on request param";
-            byte[] data=DataProcess.marshal(1,msg);
+            byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
             //socket.send(new DatagramPacket(data,data.length,ip,port));
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
