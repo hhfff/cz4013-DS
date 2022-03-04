@@ -18,7 +18,7 @@ public class Server{
     private byte[] buf = new byte[BUFFER_SIZE];
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
-    private Queue Q;
+    private ArrayList<DatagramPacket> replyPacketList;
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
@@ -54,7 +54,7 @@ public class Server{
                 socket.receive(datagramPacket);
                 buf = datagramPacket.getData();
 
-                processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
+                processData(buf,datagramPacket.getAddress(), datagramPacket.getPort(), replyPacketList );
 //                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
 
@@ -80,7 +80,7 @@ public class Server{
         }
         return ret;
     }
-    private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
+    private void processData(byte[] buf, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException{
         //msg type(4 byte, 0 or 1), request id(from client), method type
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
@@ -90,8 +90,8 @@ public class Server{
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
                 //found in history, just reply
                 byte[] data=DataProcess.marshal(history.getReplyMessage());
-                socket.send(new DatagramPacket(data,data.length,ip,port));
-                System.out.println("found in history");
+                //socket.send(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
                 return ;
             }
         }
@@ -177,12 +177,14 @@ public class Server{
 
 
             byte[] data=DataProcess.marshal(msg);
-            socket.send(new DatagramPacket(data,data.length,ip,port));
+            //socket.send(new DatagramPacket(data,data.length,ip,port));
+            replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
 
         }catch (Exception e){
             msg="Error on request param";
             byte[] data=DataProcess.marshal(msg);
-            socket.send(new DatagramPacket(data,data.length,ip,port));
+            //socket.send(new DatagramPacket(data,data.length,ip,port));
+            replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
     }
 
