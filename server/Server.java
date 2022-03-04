@@ -25,6 +25,7 @@ public class Server{
     private ArrayList<History> histories;
     public Server(){
         histories=new ArrayList<>();
+        replyPacketList=new ArrayList<>();
         try {
             socket = new DatagramSocket(54088);
             accountService=new AccountService();
@@ -100,14 +101,13 @@ public class Server{
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
                 //found in history, just reply
-                byte[] data=DataProcess.marshal(history.getReplyMessage());
                 //socket.send(new DatagramPacket(data,data.length,ip,port));
-                replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(history.getReplyPacket());
                 sendPacket();
                 return ;
             }
         }
-        String msg=null;
+        //String msg=null;
         //todo  write error catch
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
 
@@ -190,17 +190,19 @@ public class Server{
 
                 //todo write no such method reply
             }
-            if(msg!=null) histories.add(new History(requestID,port,ip,msg));
-            else msg="error in server process";
-
-
-            byte[] data=DataProcess.marshal(msg);
-            //socket.send(new DatagramPacket(data,data.length,ip,port));
-            replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+            //if success means first item in array list is message
+            if(!replyPacketList.isEmpty()) histories.add(new History(requestID,port,ip,replyPacketList.get(0)));
+            else {
+                String msg="error in server process";
+                byte[] data=DataProcess.marshal(1,msg);
+                //socket.send(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+            }
 
         }catch (Exception e){
-            msg="Error on request param";
-            byte[] data=DataProcess.marshal(msg);
+            e.printStackTrace();
+            String msg="Error on request param";
+            byte[] data=DataProcess.marshal(1,msg);
             //socket.send(new DatagramPacket(data,data.length,ip,port));
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }

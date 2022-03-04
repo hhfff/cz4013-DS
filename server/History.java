@@ -1,16 +1,18 @@
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 
 public class History {
     private int requestID;
     private int port;
     private InetAddress ipAddress;
-    private String replyMessage;
+    //private String replyMessage;
+    private DatagramPacket replyPacket;
 
-    public History(int requestID, int port, InetAddress ipAddress, String replyMessage) {
+    public History(int requestID, int port, InetAddress ipAddress, DatagramPacket replyPacket) {
         this.requestID = requestID;
         this.port = port;
         this.ipAddress = ipAddress;
-        this.replyMessage = replyMessage;
+        this.replyPacket=replyPacket;
     }
 
     public int getRequestID() {
@@ -37,11 +39,11 @@ public class History {
         this.ipAddress = ipAddress;
     }
 
-    public String getReplyMessage() {
-        return replyMessage;
+    public DatagramPacket getReplyPacket() {
+        return replyPacket;
     }
 
-    public void setReplyMessage(String replyMessage) {
-        this.replyMessage = replyMessage;
+    public void setReplyPacket(DatagramPacket replyPacket) {
+        this.replyPacket = replyPacket;
     }
 }
