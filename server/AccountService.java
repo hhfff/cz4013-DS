@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class AccountService {
     private int accountNumber=0;
-    private int currentUser=0;
+    private int currentUser=-1;
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
@@ -41,8 +41,8 @@ public class AccountService {
 
         String replyMessage= "Your account has been close successfully";
 
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
         if(i!=-1) {
             accountList.remove(i);
             serviceReply(1,replyMessage,ip,port,replyPacketList);
@@ -60,7 +60,8 @@ public class AccountService {
 
         String replyMessage="";
 
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
         if(i!=-1) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
@@ -80,7 +81,8 @@ public class AccountService {
         //Account currentAccount= new Account();
 
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
         if(i!=-1) {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
@@ -123,7 +125,8 @@ public class AccountService {
         double newAmount;
         String balanceInfo;
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
         if(i!=-1) {
         	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
             switch(fromCurrency) {
