@@ -14,7 +14,7 @@ public class Main {
         System.out.println("========start server========");*/
 
 
-        
+        System.out.println("========start server========");
         /*Server server=new Server();
         server.createUserAccount("Tom","password",Server.Currency.CNY,500.00);
         server.depositToAccount(1, "Tom", "password", Server.Currency.SGD, 1000.13);
