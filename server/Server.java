@@ -19,6 +19,7 @@ public class Server{
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
     private ArrayList<DatagramPacket> replyPacketList;
+    private static int serverPort=54088;
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
@@ -40,7 +41,7 @@ public class Server{
 //                int messsageType=0;
 //                int requestITempD=0;
 //                int methodTemp=1;//1-7
-//                String pass="pass";
+
 //                int currFromType=0;
 //                int currToType;
 //                double money=1000.0;
@@ -54,7 +55,7 @@ public class Server{
                 socket.receive(datagramPacket);
                 buf = datagramPacket.getData();
 
-                processData(buf,datagramPacket.getAddress(), datagramPacket.getPort(), replyPacketList );
+                processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
 //                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
 
@@ -80,7 +81,17 @@ public class Server{
         }
         return ret;
     }
-    private void processData(byte[] buf, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException{
+    private void sendPacket(){
+        for(DatagramPacket packet:replyPacketList){
+            try {
+                socket.send(packet);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        replyPacketList.clear();
+    }
+    private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
         //msg type(4 byte, 0 or 1), request id(from client), method type
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
@@ -92,6 +103,7 @@ public class Server{
                 byte[] data=DataProcess.marshal(history.getReplyMessage());
                 //socket.send(new DatagramPacket(data,data.length,ip,port));
                 replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
+                sendPacket();
                 return ;
             }
         }
@@ -103,13 +115,14 @@ public class Server{
             //todo need to catch those argument order error?
             if(method==Method.CREATE_ACCOUNT.getValue()){
                 var data=DataProcess.unmarshalCreateAccount(buf,12);
-                msg=accountService.createUserAccount(
+                accountService.createUserAccount(
                         (String)data.get("name"),
                         (String) data.get("password"),
                         (Currency) data.get("currencyType"),
                         (double) data.get("amt"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
                 );
             }else if(method==Method.CLOSE_ACCOUNT.getValue()){
                 var data=DataProcess.unmarshalCloseAccount(buf,12);
@@ -118,7 +131,8 @@ public class Server{
                         (String) data.get("name"),
                         (String) data.get("password"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
 
                 );
             }else if(method==Method.DEPOSITE.getValue()){
@@ -130,7 +144,8 @@ public class Server{
                         (Currency) data.get("currencyType"),
                         (double) data.get("amt"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
                 );
 
             }else if(method==Method.WITHDRAW.getValue()){
@@ -142,7 +157,8 @@ public class Server{
                         (Currency) data.get("currencyType"),
                         (double) data.get("amt"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
                 );
             }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
                 var data=DataProcess.unmarshalViewBalance(buf,12);
@@ -154,7 +170,8 @@ public class Server{
                         (Currency) data.get("currencyToType"),
                         (double) data.get("amt"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
 
                 );
             }else if(method==Method.MONITOR.getValue()){
@@ -165,7 +182,8 @@ public class Server{
                         (String) data.get("password"),
                         (int) data.get("intervalTime"),
                         ip,
-                        port
+                        port,
+                        replyPacketList
                 );
 
             }else{
@@ -186,12 +204,19 @@ public class Server{
             //socket.send(new DatagramPacket(data,data.length,ip,port));
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
+        sendPacket();
     }
 
     public DatagramSocket getSocket() {
         return this.socket;
     }
 
+    public static int getServerPort() {
+        return serverPort;
+    }
 
+    public static void setServerPort(int serverPort) {
+        Server.serverPort = serverPort;
+    }
 }
 

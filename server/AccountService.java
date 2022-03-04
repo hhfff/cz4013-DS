@@ -229,7 +229,7 @@ public class AccountService {
     
     
     public void serviceReply(String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
-    	DatagramSocket socket = new DatagramSocket(54089);
+    	DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
     	byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
@@ -239,13 +239,12 @@ public class AccountService {
 				port);
 		//socket.send(reply);
 		replyPacketList.add(reply);
-
     }
 
     public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws IOException{
         System.out.println(message);
         LocalTime time = LocalTime.now();
-        DatagramSocket socket=new DatagramSocket(54090);
+        DatagramSocket socket=new DatagramSocket(Server.getServerPort());
         byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
         byte[] updatebuf=DataProcess.stringToBytes(message);
         
@@ -255,7 +254,7 @@ public class AccountService {
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
         			update.setAddress(monitorList.get(i).getIP());
         			update.setPort(monitorList.get(i).getPort());
-        			socket.send(update);
+        			//socket.send(update);
         			replyPacketList.add(update);
         		}
         		else {
