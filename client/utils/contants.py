@@ -1,6 +1,6 @@
 from enum import Enum
 SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 2345
+SERVER_PORT = 54088
 SOCKET_BUFFER = 4096
 
 # class Method(Enum):
@@ -27,6 +27,7 @@ class Method(Enum):
     VIEW_BALANCE = 5
     CURRENCY_EXCHANGE = 6
     MONITOR = 7
+    USER_VERIFICATION = 8
     # make enum support multiple attributes: https://stackoverflow.com/questions/12680080/python-enums-with-attributes 
 
 class Currency(Enum):

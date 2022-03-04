@@ -61,7 +61,10 @@ def selectService():
                 status = Services.currency_exchange_service()
             elif opsID == Method.MONITOR:
                 status = Services.monitor_service()
-            print("Service completed")
+            if status:
+                print("Service completed")
+            else:
+                print("Something wrong")
             break
 
 
