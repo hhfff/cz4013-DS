@@ -158,8 +158,21 @@ public class Server{
                         port,
                         replyPacketList
                 );
-            }else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+            }else if(method==Method.VIEW_BALANCE.getValue()){
                 var data=DataProcess.unmarshalViewBalance(buf,12);
+                accountService.viewBalance(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        ip,
+                        port,
+                        replyPacketList
+                );
+
+
+            }
+            else if(method==Method.CURRENCY_EXCHANGE.getValue()){
+                var data=DataProcess.unmarshalCurrencyExchange(buf,12);
                 accountService.currencyExchange(
                         (int) data.get("acctNum"),
                         (String) data.get("name"),
