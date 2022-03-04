@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class AccountService {
     private int accountNumber=0;
+    private int currentUser=0;
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
@@ -104,7 +105,8 @@ public class AccountService {
         int i;
         String balanceInfo;
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
         if(i != -1) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
@@ -208,15 +210,16 @@ public class AccountService {
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
                 //currentAccount=accountList.get(i);
-                if(accountList.get(i).getAccountName() != accountName) {
+                if(!accountList.get(i).getAccountName().equals(accountName)) {
                     serviceReply(0,wrongAccountName,ip,port,replyPacketList);
                     return -1;
                 }
-                else if(accountList.get(i).getPasswd() != password) {
+                else if(!accountList.get(i).getPasswd().equals(password) ){
                     serviceReply(0,wrongPassword,ip,port,replyPacketList);
                     return -1;
                 }
                 else {
+                    currentUser = i;
                     serviceReply(1,userPassed,ip,port,replyPacketList);
                     return i;
                 }

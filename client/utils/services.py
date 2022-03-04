@@ -5,7 +5,8 @@ def _login_service():
     accNum = input("Please enter your bank account number:")
     accName = input("Please enter your account name:")
     pw = input("Please enter your password:")
-    succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,int(accNum),accName),(int,str))
+    accNum = int(accNum)
+    succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,accNum,accName),(int,str))
 
     if succ:
         print(msg[1])
@@ -84,8 +85,11 @@ def deposite_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
             curreny_type_input = input(f"Please enter deposite curreny type:")
-            curreny_type = contants.Currency(curreny_type_input)
+            curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
             print("Invalid type! Please Try again.")
             continue
@@ -142,6 +146,7 @@ def view_balance_service():
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
+
     succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred,(int,str))      
     if succ:
         print("Server:",msg[1])

@@ -16,11 +16,19 @@ def setServerAddress(host,port):
 def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
     try:
         UDPSocket.request_id +=1
-        marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))    
+        marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))   
+        print("Msg to server")
+        print("-------------------------------------------")
+        print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple)) 
+        print("-------------------------------------------")
+        
         UDPSocket.send_msg(marshalled_data)
         # TODO
         # try 
         reply_data = _waitForReply(methodCode,receiveParaTypeOder)
+        time.sleep(1)
+
+
         # frist two item reply id , status
     except Exception as e:
         print(str(e))
@@ -32,10 +40,10 @@ def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
     bytearray_data = UDPSocket.listen_msg()
     
     list_data = Marshalling.unmarshall(bytearray_data,(int,*paraTypeOrder))
-    # print("Raw msg from server")
-    # print("-------------------------------------------")
-    # print(list_data)
-    # print("-------------------------------------------")
+    print("Raw msg from server")
+    print("-------------------------------------------")
+    print(list_data)
+    print("-------------------------------------------")
     return list_data
 
 def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeOder:Tuple):
