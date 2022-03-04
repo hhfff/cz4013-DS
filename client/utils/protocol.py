@@ -17,14 +17,18 @@ def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
     marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))
     UDPSocket.send_msg(marshalled_data)
     reply_data = _waitForReply(methodCode,receiveParaTypeOder)
+    # frist two item reply id , status
     return True,reply_data[1:]
 
 
 def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
     bytearray_data = UDPSocket.listen_msg()
-    # frist two item reply id , status
+    
     list_data = Marshalling.unmarshall(bytearray_data,(int,*paraTypeOrder))
-
+    print("Raw msg from server")
+    print("-------------------------------------------")
+    print(list_data)
+    print("-------------------------------------------")
     return list_data
 
 def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeOder:Tuple):
