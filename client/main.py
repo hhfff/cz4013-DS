@@ -4,6 +4,7 @@
 # https://github.com/Brabalawuka/CZ4013-Distributed-System-Project/blob/6ebd7086109d0a82f44da1ac7006aa2085e62372/cz4013_client/utils/styled_printing.py#L34
 from utils import contants,protocol
 from utils.contants import Method
+import utils.services as Services
 
 def main():
     promptServerAddress()
@@ -29,30 +30,41 @@ def promptServerAddress():
             break
 
 def selectService():
-    print(f"{Method.CREATE_ACCOUNT.value} | {Method.CREATE_ACCOUNT.description}")
-    print(f"{Method.CLOSE_ACCOUNT.value} | {Method.CLOSE_ACCOUNT.description}")
-    print(f"{Method.DEPOSITE.value} | {Method.DEPOSITE.description}")
-    print(f"{Method.WITHDRAW.value} | {Method.WITHDRAW.description}")
-    print(f"{Method.VIEW_BALANCE.value} | {Method.VIEW_BALANCE.description}")
-    print(f"{Method.CURRENCY_EXCHANGE.value} | {Method.CURRENCY_EXCHANGE.description}")    
-    print(f"{Method.MONITOR.value} | {Method.MONITOR.description}")
     while True:
-        inputStr = input("Please select a service:")
-        try:
-            inputStr = int(inputStr)
-            opsID = contants.Method(inputStr)
-        except ValueError:
-            print("Invalid input! Please Try again.")
-            continue
-        method_mapper = {1 : Method.CREATE_ACCOUNT.f,
-           2 : Method.CLOSE_ACCOUNT.f,
-           3 : Method.DEPOSITE.f,
-           4 : Method.WITHDRAW.f,
-           5 : Method.VIEW_BALANCE.f,
-           6 : Method.CURRENCY_EXCHANGE.f,
-           7 : Method.MONITOR.f,           
-        }
-        method_mapper[opsID.value]()
+        print(f"{Method.CREATE_ACCOUNT.value} | Open a new account")
+        print(f"{Method.CLOSE_ACCOUNT.value} | Close account")
+        print(f"{Method.DEPOSITE.value} | Deposit money to account")
+        print(f"{Method.WITHDRAW.value} | Withdraw money from account")
+        print(f"{Method.VIEW_BALANCE.value} | View account balance")
+        print(f"{Method.CURRENCY_EXCHANGE.value} | Exchange account currency type")    
+        print(f"{Method.MONITOR.value} | Monitor server")
+        while True:
+            inputStr = input("Please select a service:")
+            try:
+                inputStr = int(inputStr)
+                opsID = Method(inputStr)
+            except ValueError:
+                print("Invalid input! Please Try again.")
+                continue
+
+            if opsID == Method.CREATE_ACCOUNT:
+                status = Services.create_account_service()
+            elif opsID == Method.CLOSE_ACCOUNT:
+                status = Services.close_account_service()
+            elif opsID == Method.DEPOSITE:
+                status = Services.deposite_service()
+            elif opsID == Method.WITHDRAW:
+                status = Services.withdraw_service()
+            elif opsID == Method.VIEW_BALANCE:
+                status = Services.view_balance_service()
+            elif opsID == Method.CURRENCY_EXCHANGE:
+                status = Services.currency_exchange_service()
+            elif opsID == Method.MONITOR:
+                status = Services.monitor_service()
+            print("Service completed")
+            break
+
+
 
 
 if __name__ == "__main__":

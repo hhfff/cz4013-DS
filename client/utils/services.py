@@ -3,7 +3,7 @@ from utils import protocol,contants
 
 def create_account_service():
     while True:
-        accName = input("Please an account name:")
+        accName = input("Please enter an account name:")
         pw = input("Please enter your password:")
         re_pw = input("Please re-enter your password:")
         if pw == re_pw:
@@ -42,24 +42,24 @@ def close_account_service():
     
 
 def deposite_service():
-    login_service()
+    while not login_service():
+        pass
 
 def withdraw_service():
-    login_service()
+    while not login_service():
+        pass
     
 def view_balance_service():
-    login_service()
+    while not login_service():
+        pass
 
 def currency_exchange_service():
-    login_service()
+    while not login_service():
+        pass
 
 def monitor_service():
-    login_service()
-    while input()!="X":
+    while not login_service():
         pass
-        # T =2
-        # listening SOCKET
-        # REcieve
         
 
 def login_service():
