@@ -19,7 +19,7 @@ public class Server{
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
     private ArrayList<DatagramPacket> replyPacketList;
-    private static int serverPort=54088;
+    private static int serverPort=12345;
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
@@ -27,7 +27,7 @@ public class Server{
         histories=new ArrayList<>();
         replyPacketList=new ArrayList<>();
         try {
-            socket = new DatagramSocket(54088);
+            socket = new DatagramSocket(12345);
             accountService=new AccountService();
         } catch (SocketException e) {
             e.printStackTrace();

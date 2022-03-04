@@ -27,7 +27,7 @@ public class AccountService {
         Account newUser = new Account(accountNumber,accountName,password,saving);
         accountList.add(newUser);
         replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
-        serviceReply(replyMessage,ip,port,replyPacketList);
+        serviceReply(1,replyMessage,ip,port,replyPacketList);
         monitorUser(accountName+" has create a new account.",replyPacketList);
         //return replyMessage;
     }
@@ -44,7 +44,7 @@ public class AccountService {
 
         if(i!=-1) {
             accountList.remove(i);
-            serviceReply(replyMessage,ip,port,replyPacketList);
+            serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+"has closing his account",replyPacketList);
         }
 
@@ -64,7 +64,7 @@ public class AccountService {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
-            serviceReply(replyMessage,ip,port,replyPacketList);
+            serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+" deposit some money to account.",replyPacketList);
         }
 
@@ -84,13 +84,13 @@ public class AccountService {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
             	replyMessage="Sorry, you don't have enough balance to withdraw "+currency.toString()+" : "+amount+".";
-            	serviceReply(replyMessage,ip,port,replyPacketList);
+            	serviceReply(0,replyMessage,ip,port,replyPacketList);
             }
             else {
                 balance = (double) accountList.get(i).getSaving().get(currency)-amount;
                 accountList.get(i).getSaving().put(currency, balance);
                 replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
-                serviceReply(replyMessage,ip,port,replyPacketList);
+                serviceReply(1,replyMessage,ip,port,replyPacketList);
                 monitorUser(accountName+" withdraw some money from account.",replyPacketList);
             }
 
@@ -108,7 +108,7 @@ public class AccountService {
         if(i != -1) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
-            serviceReply(replyMessage,ip,port,replyPacketList);
+            serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+" check his account.",replyPacketList);
         }
 
@@ -154,13 +154,13 @@ public class AccountService {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
             
-            serviceReply(replyMessage,ip,port,replyPacketList);
+            serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString(),replyPacketList);
 
         }
         else {
         	replyMessage ="Sorry, you don't have enough "+fromCurrency+" to convert to"+toCurrency;
-        	serviceReply(replyMessage,ip,port,replyPacketList);
+        	serviceReply(0,replyMessage,ip,port,replyPacketList);
         }
         }
         
@@ -189,7 +189,7 @@ public class AccountService {
     		}
     	}
     	replyMessage= "You have success register for monitor update";
-    	serviceReply(replyMessage,ip,port,replyPacketList);
+    	serviceReply(1,replyMessage,ip,port,replyPacketList);
     	monitorUser(accountName+"has register for monitor update.",replyPacketList);
     	
     	
@@ -209,32 +209,32 @@ public class AccountService {
             }
         }
         if(i==accountList.size()) {
-            serviceReply(wrongAccountNum,ip,port,replyPacketList);
+            serviceReply(0,wrongAccountNum,ip,port,replyPacketList);
             return -1;
         }
         else if(accountList.get(i).getAccountName() != accountName) {
-            serviceReply(wrongAccountName,ip,port,replyPacketList);
+            serviceReply(0,wrongAccountName,ip,port,replyPacketList);
             return -1;
         }
         else if(accountList.get(i).getPasswd() != password) {
-            serviceReply(wrongPassword,ip,port,replyPacketList);
+            serviceReply(0,wrongPassword,ip,port,replyPacketList);
             return -1;
         }
         else {
-        	serviceReply(userPassed,ip,port,replyPacketList);
+        	serviceReply(1,userPassed,ip,port,replyPacketList);
             return i;
         }
 
     }
     
     
-    public void serviceReply(String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
     	//DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
     	//byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
     	//byte[] replyResult=DataProcess
     	//byte[] replybuf=DataProcess.stringToBytes(message);
-        byte[] replybuf=DataProcess.marshal(1,1,message.length(),message);
+        byte[] replybuf=DataProcess.marshal(1,status,message.length(),message);
     	
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip, 
 				port);
