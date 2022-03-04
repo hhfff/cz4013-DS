@@ -1,6 +1,6 @@
 from enum import Enum
 SERVER_HOST = '127.0.0.1'
-SERVER_PORT = 2345
+SERVER_PORT = 54088
 SOCKET_BUFFER = 4096
 
 # class Method(Enum):

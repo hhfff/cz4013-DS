@@ -140,6 +140,17 @@ def view_balance_service():
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
+    succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred)        
+    if succ:
+        print(msg[1])
+        if msg[0] == 1:
+            return True
+        else:                
+            return False
+    else:
+
+        return False
+
 
 def currency_exchange_service():
     logged_in = False
@@ -186,9 +197,8 @@ def monitor_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ, msg = protocol.sendRequest(contants.Method.WITHDRAW,(*user_cred,intervalTime,(int,str)) )
-        # timeout 
-        return True
+    succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred,intervalTime,(int,str)))
+    return succ
         
 
 
