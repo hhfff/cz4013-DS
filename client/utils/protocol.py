@@ -22,8 +22,10 @@ def sendRequest(methodCode:Method, dataTuple:Tuple):
 def waitForReply(methodCode:Method, paraTypeOrder:Tuple):
     bytearray_data = UDPSocket.listen_msg()
     list_data = Marshalling.unmarshall(bytearray_data,paraTypeOrder)
+
+
     # TODO check if reply mothod code identical
     # drop header
-    return list_data[2:]
+    return list_data[0],list_data[1:]
 
     

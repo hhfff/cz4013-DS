@@ -14,6 +14,8 @@ class Marshalling:
 
     @classmethod
     def unmarshall(cls,buffer: bytearray,paraTypeOrder:tuple) -> list:
+        #buffer contain server address,
+        buffer=buffer[0]
         unmarshall_data = []
         ptr = 0 
         for data_type in paraTypeOrder:
@@ -21,7 +23,7 @@ class Marshalling:
                 unmarshall_data.append(struct.unpack('>i',buffer[ptr:ptr+4])[0])
                 ptr +=4
             elif data_type is float:
-                unmarshall_data.append(struct.unpack('>f',buffer[ptr:ptr+4])[0])
+                unmarshall_data.append(struct.unpack('>d',buffer[ptr:ptr+4])[0])
                 ptr +=4
             elif data_type is str:
                 length = struct.unpack('>i',buffer[ptr:ptr+4])[0]

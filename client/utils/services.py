@@ -7,8 +7,7 @@ def create_account_service():
         pw = input("Please enter your password:")
         re_pw = input("Please re-enter your password:")
         if pw == re_pw:
-            protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accName,pw))
-
+            protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,1,123.0,accName))
             succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
 
             if succ is False:
@@ -38,8 +37,8 @@ def close_account_service():
 
         else:
             return True
-            
-    
+
+
 
 def deposite_service():
     while not login_service():
@@ -48,7 +47,7 @@ def deposite_service():
 def withdraw_service():
     while not login_service():
         pass
-    
+
 def view_balance_service():
     while not login_service():
         pass
@@ -60,7 +59,7 @@ def currency_exchange_service():
 def monitor_service():
     while not login_service():
         pass
-        
+
 
 def login_service():
     accNum = input("Please enter your bank account number:")
@@ -69,7 +68,7 @@ def login_service():
     protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(accNum,accName,pw))
 
     succ, msg = protocol.waitForReply(contants.Method.CREATE_ACCOUNT,(int,str))
-    
+
     if succ is False:
         print(msg)
         return False

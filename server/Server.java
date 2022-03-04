@@ -59,9 +59,6 @@ public class Server{
                 processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
 //                System.out.println(data(buf));
                 //DataProcess.printByteToHex(buf);
-
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
