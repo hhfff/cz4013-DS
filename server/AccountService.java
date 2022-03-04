@@ -197,11 +197,14 @@ public class AccountService {
     }
     
     public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+        System.out.println(String.format("acc num %d create acct name %s, passwd: %s acc list size: %d",accountNum,accountName,password,accountList.size()));
+
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account number";
         String wrongPassword= "Sorry, you have enter the wrong password";
         String userPassed = "User verification success";
+
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
                 //currentAccount=accountList.get(i);
