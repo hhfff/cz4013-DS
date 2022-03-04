@@ -197,6 +197,18 @@ public class Server{
                         replyPacketList
                 );
 
+            }else if(method==Method.USER_VERIFICATION.getValue()){
+                var data=DataProcess.unmarshalUserVerification(buf,12);
+                accountService.userVerification(
+                        (int) data.get("acctNum"),
+                        (String) data.get("name"),
+                        (String) data.get("password"),
+                        ip,
+                        port,
+                        replyPacketList
+                );
+
+
             }else{
 
                 //todo write no such method reply
