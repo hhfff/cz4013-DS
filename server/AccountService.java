@@ -227,7 +227,7 @@ public class AccountService {
 
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
-        String wrongAccountName = "Sorry, you have enter a wrong account number";
+        String wrongAccountName = "Sorry, you have enter a wrong account name";
         String wrongPassword= "Sorry, you have enter the wrong password";
         String userPassed = "User verification success";
 
