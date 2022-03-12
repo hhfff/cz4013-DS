@@ -63,7 +63,7 @@ def close_account_service():
         logged_in, user_cred = _login_service()        
     confirm  = input("Are you sure you want to close current logged in account:")
     if confirm:
-        succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,user_cred)        
+        succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,(*user_cred[:-1],user_cred[-1]),(int,str))                    
         if succ:
             print("Server:",msg[1])
             if msg[0] == 1:

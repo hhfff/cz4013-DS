@@ -50,9 +50,12 @@ def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeO
     try:
         UDPSocket.request_id +=1
         marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))
+        print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))
+
         UDPSocket.send_msg(marshalled_data)
         timeout = time.time() + intervalTime   # interval + now
         while True:
+            time.sleep(0.1)
             reply_data = _waitForReply(methodCode,receiveParaTypeOder)
             print("Server:",reply_data[2])
             if time.time() > timeout:
