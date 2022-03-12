@@ -38,6 +38,7 @@ def selectService():
         print(f"{Method.VIEW_BALANCE.value} | View account balance")
         print(f"{Method.CURRENCY_EXCHANGE.value} | Exchange account currency type")    
         print(f"{Method.MONITOR.value} | Monitor server")
+       
         while True:
             inputStr = input("Please select a service:")
             try:
