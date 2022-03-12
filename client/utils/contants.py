@@ -1,5 +1,5 @@
 from enum import Enum
-SERVER_HOST = '127.0.0.1'
+SERVER_HOST = '192.168.2.2'
 SERVER_PORT = 54088
 SOCKET_BUFFER = 4096
 
