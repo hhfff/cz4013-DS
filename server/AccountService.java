@@ -1,4 +1,4 @@
-import java.io.IOException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -16,7 +16,7 @@ public class AccountService {
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
     public AccountService(){}
-    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
@@ -33,7 +33,7 @@ public class AccountService {
         //return replyMessage;
     }
 
-    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
@@ -55,7 +55,7 @@ public class AccountService {
 
     }
 
-    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
@@ -79,7 +79,7 @@ public class AccountService {
 
     }
 
-    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
@@ -109,7 +109,7 @@ public class AccountService {
 
     }
 
-    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
@@ -129,7 +129,7 @@ public class AccountService {
 
     }
 
-    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws IOException {
+    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws Exception {
         System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
 
         int i;
@@ -185,7 +185,7 @@ public class AccountService {
         
 
     }
-    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
     	int i,j;
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
@@ -222,7 +222,7 @@ public class AccountService {
     
     }
     
-    public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("acc num %d create acct name %s, passwd: %s acc list size: %d",accountNum,accountName,password,accountList.size()));
 
         int i;
@@ -255,7 +255,7 @@ public class AccountService {
     }
     
     
-    public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
     	//DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
     	//byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
@@ -269,7 +269,7 @@ public class AccountService {
 		replyPacketList.add(reply);
     }
 
-    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws IOException{
+    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
         LocalTime time = LocalTime.now();
         //DatagramSocket socket=new DatagramSocket(Server.getServerPort());
