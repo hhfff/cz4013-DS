@@ -282,6 +282,9 @@ public class DataProcess {
         hashMap.put("acctNum",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
         startByte+=length;
 
+        hashMap.put("intervalTime",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
+        startByte+=length;
+        
         int nameLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
         startByte+=length;
 
@@ -289,8 +292,6 @@ public class DataProcess {
         startByte+=nameLength;
 
 
-        hashMap.put("intervalTime",bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN));
-        startByte+=length;
 
 
         return hashMap;
