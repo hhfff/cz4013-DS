@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class AccountService {
     private int accountNumber=0;
-    private int currentUser=0;
+    private int currentUser=-1;
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
@@ -41,12 +41,15 @@ public class AccountService {
 
         String replyMessage= "Your account has been close successfully";
 
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-
-        if(i!=-1) {
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
+        if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             accountList.remove(i);
             serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+"has closing his account",replyPacketList);
+        }
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
         }
 
 
@@ -60,15 +63,18 @@ public class AccountService {
 
         String replyMessage="";
 
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        if(i!=-1) {
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
+        if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
             serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+" deposit some money to account.",replyPacketList);
         }
-
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        }
 
 
     }
@@ -80,8 +86,9 @@ public class AccountService {
         //Account currentAccount= new Account();
 
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        if(i!=-1) {
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
+        if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
             	replyMessage="Sorry, you don't have enough balance to withdraw "+currency.toString()+" : "+amount+".";
@@ -96,6 +103,9 @@ public class AccountService {
             }
 
         }
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        }
 
     }
 
@@ -107,11 +117,14 @@ public class AccountService {
         String replyMessage;
 //        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
         i = currentUser;
-        if(i != -1) {
+        if(i != -1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
             replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
             serviceReply(1,replyMessage,ip,port,replyPacketList);
             monitorUser(accountName+" check his account.",replyPacketList);
+        }
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
         }
 
     }
@@ -123,8 +136,9 @@ public class AccountService {
         double newAmount;
         String balanceInfo;
         String replyMessage;
-        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        if(i!=-1) {
+//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentUser;
+        if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
         	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
             switch(fromCurrency) {
                 case CNY: if(toCurrency== Currency.MYR) {
@@ -165,23 +179,28 @@ public class AccountService {
         	serviceReply(0,replyMessage,ip,port,replyPacketList);
         }
         }
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        }
         
 
     }
     public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
-    	int i;
+    	int i,j;
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
     	MonitorInfo monitorAccount= new MonitorInfo(accountNum,time,ip,port);
+    	i= currentUser;
+    	if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
     	if(monitorList.isEmpty()) {
     		monitorList.add(monitorAccount);
     	}
     	else{
-    		for(i=0;i<monitorList.size();i++) {
-    			if(monitorList.get(i).getAccountNum()==accountNum) {
-    				monitorList.get(i).setExpireTime(time);
-    				monitorList.get(i).setIP(ip);
-    				monitorList.get(i).setport(port);
+    		for(j=0;i<monitorList.size();j++) {
+    			if(monitorList.get(j).getAccountNum()==accountNum) {
+    				monitorList.get(j).setExpireTime(time);
+    				monitorList.get(j).setIP(ip);
+    				monitorList.get(j).setport(port);
     				break;
     			}
     		}
@@ -193,6 +212,11 @@ public class AccountService {
     	replyMessage= "You have success register for monitor update";
     	serviceReply(1,replyMessage,ip,port,replyPacketList);
     	monitorUser(accountName+"has register for monitor update.",replyPacketList);
+    	}
+        else {
+        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        }
+    	
     	
     	
     
@@ -203,7 +227,7 @@ public class AccountService {
 
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
-        String wrongAccountName = "Sorry, you have enter a wrong account number";
+        String wrongAccountName = "Sorry, you have enter a wrong account name";
         String wrongPassword= "Sorry, you have enter the wrong password";
         String userPassed = "User verification success";
 
