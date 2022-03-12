@@ -288,13 +288,15 @@ public class AccountService {
 
         //reply id, status, message length, message
         byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);
-        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+       
         if(!monitorList.isEmpty()) {
         	for(int i=0; i<monitorList.size();i++) {
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
         			System.out.println("packet for account: "+monitorList.get(i).getAccountNum()+"has add to packet list. IP: "+monitorList.get(i).getIP());
         			update.setAddress(monitorList.get(i).getIP());
         			update.setPort(monitorList.get(i).getPort());
+        			System.out.println("IP for update packet:"+update.getAddress());
         			//socket.send(update);
         			replyPacketList.add(update);
         			System.out.println("reply List size: "+replyPacketList.size());

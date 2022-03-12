@@ -82,7 +82,7 @@ public class Server{
     private void sendPacket(){
         for(DatagramPacket packet:replyPacketList){
             try {
-                System.out.println("packet sent: "+packet.getAddress());
+                System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
                 socket.send(packet);
             } catch (IOException e) {
                 e.printStackTrace();
