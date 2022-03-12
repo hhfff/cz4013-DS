@@ -73,11 +73,9 @@ def close_account_service():
         else:
 
             return False
-
     else:
         return True
             
-    
 
 def deposite_service():
     logged_in = False
@@ -119,8 +117,11 @@ def withdraw_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
             curreny_type_input = input(f"Please enter withdraw curreny type:")
-            curreny_type = contants.Currency(curreny_type_input)
+            curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
             print("Invalid type! Please Try again.")
             continue
@@ -165,10 +166,13 @@ def currency_exchange_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
             src_curreny_type_input = input(f"Please enter source curreny type:")
-            src_curreny_type = contants.Currency(src_curreny_type_input)
+            src_curreny_type = contants.Currency(int(src_curreny_type_input))
             tar_curreny_type_input = input(f"Please enter target curreny type:")
-            tar_curreny_type = contants.Currency(tar_curreny_type_input)
+            tar_curreny_type = contants.Currency(int(tar_curreny_type_input))
         except ValueError:
             print("Invalid type! Please Try again.")
             continue
@@ -204,7 +208,7 @@ def monitor_service():
         except ValueError:
             print("Invalid input! Please Try again.")
             continue
-    succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred[:-1],intervalTime,user_cred[-1],(int,str)))
+    succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred[:-1],intervalTime,user_cred[-1]),(int,str))
     return succ
         
 
