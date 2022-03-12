@@ -211,6 +211,7 @@ public class AccountService {
 	//    		}
 	//    	}
     		monitorList.add(monitorAccount);
+    		
 	    	replyMessage= "You have success register for monitor update";
 	    	serviceReply(1,replyMessage,ip,port,replyPacketList);
 	    	monitorUser(accountName+"has register for monitor update.",replyPacketList);
@@ -274,6 +275,12 @@ public class AccountService {
     public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
         System.out.println("monitor list size: "+monitorList.size());
+        for(int k=0;k<monitorList.size();k++) {
+			System.out.println("monitor List:");
+			System.out.print(monitorList.get(k).getAccountNum());
+			System.out.print("   "+monitorList.get(k).getExpireTime());
+			System.out.println("     "+monitorList.get(k).getIP());
+		}
         LocalTime time = LocalTime.now();
         //DatagramSocket socket=new DatagramSocket(Server.getServerPort());
         //byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
@@ -285,6 +292,7 @@ public class AccountService {
         if(!monitorList.isEmpty()) {
         	for(int i=0; i<monitorList.size();i++) {
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			System.out.println("packet for account: "+monitorList.get(i).getAccountNum()+"has add to packet list. IP: "+monitorList.get(i).getIP());
         			update.setAddress(monitorList.get(i).getIP());
         			update.setPort(monitorList.get(i).getPort());
         			//socket.send(update);
