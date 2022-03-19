@@ -1,3 +1,7 @@
+/**
+ * @author LONG
+ *
+ */
 public enum Method {
     CREATE_ACCOUNT(1),
     CLOSE_ACCOUNT(2),

@@ -1,3 +1,4 @@
+
 public enum Currency {
 
         CNY, //0
