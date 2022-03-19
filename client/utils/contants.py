@@ -3,6 +3,9 @@ SERVER_HOST = '192.168.2.2'
 SERVER_PORT = 54088
 SOCKET_BUFFER = 4096
 
+PacketLossProbability = 0.9
+timeout = 5
+
 # class Method(Enum):
 #     CREATE_ACCOUNT = (1,"Open a new account",create_account_service)
 #     CLOSE_ACCOUNT = (2, "Close account",close_account_service)
@@ -38,3 +41,4 @@ class Currency(Enum):
 class Network(Enum):
     Request = 0
     Reply = 1
+

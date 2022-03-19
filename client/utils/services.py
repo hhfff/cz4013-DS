@@ -2,33 +2,46 @@ from xmlrpc.client import Boolean
 from utils import protocol,contants
 
 def _login_service():
-    accNum = input("Please enter your bank account number:")
-    accName = input("Please enter your account name:")
-    pw = input("Please enter your password:")
-    accNum = int(accNum)
-    succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,accNum,accName),(int,str))
+    while True:
+        accNum = input("Please enter your bank account number:")
+        if not accNum.isdigit():
+            print("Account number has to be in digit")
+            continue
+        accName = input("Please enter your account name:")
+        pw = input("Please enter your password:")
+        if len(pw)>4:
+            print("Password cannot more than 4 characters. Please try again.")
+            continue
+        accNum = int(accNum)
+        succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,accNum,accName),(int,str))
 
-    if succ:
-        print(msg[1])
-        if msg[0] == 1:
-            return True, (pw,accNum,accName)
-        else:            
+        if succ:
+            print(msg[1])
+            if msg[0] == 1:
+                return True, (pw,accNum,accName)
+            else:            
+                return False,()
+        else:
+
             return False,()
-    else:
-
-        return False,()
 
 def create_account_service():
     while True:
         accName = input("Please enter an account name:")
+        if not accNum.isdigit():
+            print("Account number has to be in digit")
+            continue
         pw = input("Please enter your password:")
+        if len(pw)>4:
+            print("Password cannot more than 4 characters. Please try again.")
+            continue
         re_pw = input("Please re-enter your password:")
-        if pw == re_pw:
-            # TODO
-            # only 4 characters
-            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+        if pw == re_pw:            
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
-            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")            
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            
+                        
             while True:
                 try:
                     curreny_type_input = input(f"Please select initial curreny type:")
@@ -61,8 +74,8 @@ def close_account_service():
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()        
-    confirm  = input("Are you sure you want to close current logged in account:")
-    if confirm:
+    confirm  = input("Are you sure you want to close current logged in account: (Enter 'N' or 'n' to cancel)")
+    if confirm.lower() not in ['N','n']:
         succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,(*user_cred[:-1],user_cred[-1]),(int,str))                    
         if succ:
             print("Server:",msg[1])
@@ -83,9 +96,9 @@ def deposite_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
-            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
-            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
             curreny_type_input = input(f"Please enter deposite curreny type:")
             curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
@@ -117,9 +130,9 @@ def withdraw_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
-            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
-            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
             curreny_type_input = input(f"Please enter withdraw curreny type:")
             curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
@@ -166,9 +179,9 @@ def currency_exchange_service():
         logged_in, user_cred = _login_service()  
     while True:
         try:
-            print(f"{contants.Currency.SGD.value} | Singapore dollar")
+            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
-            print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")  
+            print(f"{contants.Currency.SGD.value} | Singapore dollar")
             src_curreny_type_input = input(f"Please enter source curreny type:")
             src_curreny_type = contants.Currency(int(src_curreny_type_input))
             tar_curreny_type_input = input(f"Please enter target curreny type:")
@@ -196,6 +209,7 @@ def currency_exchange_service():
     
 
 def monitor_service():
+    # https://github.com/Brabalawuka/CZ4013-Distributed-System-Project/blob/main/cz4013_client/helpers/udp_client.py
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  

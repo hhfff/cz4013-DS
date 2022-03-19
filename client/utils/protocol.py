@@ -3,10 +3,10 @@
 import time
 from tkinter import E
 from typing import Tuple
-from utils.UDPhelper import UDPSocket
+from utils.UDPhelper import UDPSocket,TimeoutError
 from utils.marshalling import Marshalling
-from utils.contants import Method,Network
-
+from utils.contants import Method,Network,PacketLossProbability,timeout
+from random import random # generate number [0,1]
 
 
 def setServerAddress(host,port):
@@ -14,56 +14,71 @@ def setServerAddress(host,port):
 
 # add request id
 def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
-    try:
+    try:        
         UDPSocket.request_id +=1
         marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))   
-        print("Msg to server")
-        print("-------------------------------------------")
-        print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple)) 
-        print("-------------------------------------------")
-        
-        UDPSocket.send_msg(marshalled_data)
-        # TODO
-        # try 
-        reply_data = _waitForReply(methodCode,receiveParaTypeOder)
-        time.sleep(1)
+        # print("Msg to server")
+        # print("-------------------------------------------")
+        # print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple)) 
+        # print("-------------------------------------------")
+        while True:
+            UDPSocket.settimeout(timeout)
+            # simulate packet loss with certain probability
+            if (random() >= PacketLossProbability) :
+                UDPSocket.send_msg(marshalled_data)            
+            else:
+                print("Packet Loss")
+            try:                
+                reply_data = _waitForReply(methodCode,receiveParaTypeOder)  
+                return True,reply_data[1:]                     
+            except TimeoutError:
+                print(f"No message from server after {timeout} seconds. Packet will be resended!")
 
 
         # frist two item reply id , status
+    
     except Exception as e:
         print(str(e))
-        return False,()
-    return True,reply_data[1:]
+        return False,()    
 
 
 def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
     bytearray_data = UDPSocket.listen_msg()
     
     list_data = Marshalling.unmarshall(bytearray_data,(int,*paraTypeOrder))
-    print("Raw msg from server")
-    print("-------------------------------------------")
-    print(list_data)
-    print("-------------------------------------------")
+    # print("Raw msg from server")
+    # print("-------------------------------------------")
+    # print(list_data)
+    # print("-------------------------------------------")
     return list_data
 
 def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeOder:Tuple):
     try:
         UDPSocket.request_id +=1
         marshalled_data = Marshalling.marshall((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))
-        print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple))
-
         UDPSocket.send_msg(marshalled_data)
-        timeout = time.time() + intervalTime   # interval + now
+
+        end_time = time.time() + intervalTime
+
+        # Stop the listening if server never send msg within interval time
+        UDPSocket.set_timeout(intervalTime)
+
         while True:
-            time.sleep(0.1)
+            
+            
             reply_data = _waitForReply(methodCode,receiveParaTypeOder)
-            print("Server:",reply_data[2])
-            if time.time() > timeout:
-                return True
-    except:
+            end = time.time()
+            print("Server:",reply_data[2])    
+            if reply_data[1] == 0:
+                return False     
+
+            # update timeout 
+            UDPSocket.set_timeout(end_time -end)
+    except TimeoutError:
+        print("Your Subscription expired.")
+        return True
+    except Exception as e:
+        print(str(e))
         return False
-
-
-
 
     

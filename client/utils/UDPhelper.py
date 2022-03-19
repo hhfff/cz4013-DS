@@ -20,10 +20,29 @@ class UDPSocket:
         # listen_msg() # 
 
     @classmethod
-    def listen_msg(cls):
-        while True:
+    def recv_msg(cls):     
+        try:
             data, addr = cls.client_socket.recvfrom(cls.socket_bufer) 
-            return data, addr                       
+            if addr == cls.serverAddress:   
+                return data     
+            else:
+                raise Exception(f'Unexpected Message From {addr} Detected! Something wrong!')
+        except socket.timeout:
+            raise TimeoutError('Udp socket timeout!')
+
+
+    @classmethod
+    def set_timeout(cls,time):        
+        # try:
+        cls.client_socket.settimeout(time)
+        # except Exception as e:
+        #     print(str(e))
+        #     return False
+        # return True
+
+class TimeoutError(Exception):
+    """Raised when the UDP socket timeout"""
+    pass
 
 if __name__ == '__main__':
     UDPSocket.setServerAddress('127.0.0.1',54088)
