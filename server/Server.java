@@ -80,10 +80,16 @@ public class Server{
         return ret;
     }
     private void sendPacket(){
-        for(DatagramPacket packet:replyPacketList){
+        double chance;
+    	for(DatagramPacket packet:replyPacketList){
             try {
-                System.out.println("packet sent");
-                socket.send(packet);
+                System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
+                chance=Math.random();
+                if(chance<=0.8) {
+                System.out.println("send out success chance is: "+chance);
+                  socket.send(packet);
+                }
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }

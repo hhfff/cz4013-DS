@@ -1,4 +1,4 @@
-import java.io.IOException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -9,14 +9,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author LONG
+ *
+ */
+/**
+ * @author LONG
+ *
+ */
 public class AccountService {
+    /**
+     * 
+     */
     private int accountNumber=0;
     private int currentUser=-1;
     private ArrayList<Account> accountList = new ArrayList<Account>();
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();
 
     public AccountService(){}
-    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    
+    /**
+     * @param accountName
+     * @param password
+     * @param currency
+     * @param balance
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
@@ -33,7 +55,16 @@ public class AccountService {
         //return replyMessage;
     }
 
-    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
@@ -55,7 +86,18 @@ public class AccountService {
 
     }
 
-    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param currency
+     * @param amount
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
@@ -79,7 +121,18 @@ public class AccountService {
 
     }
 
-    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param currency
+     * @param amount
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void wthdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
@@ -109,7 +162,16 @@ public class AccountService {
 
     }
 
-    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
@@ -129,7 +191,19 @@ public class AccountService {
 
     }
 
-    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param fromCurrency
+     * @param toCurrency
+     * @param amount
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws Exception {
         System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
 
         int i;
@@ -185,33 +259,48 @@ public class AccountService {
         
 
     }
-    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+
+    /**
+     * 
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param interval
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
+    	System.out.println(String.format("acc num %d , acct name %s, passwd: %s acc list size: %d, ",accountNum,accountName,password,accountList.size()));
     	int i,j;
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
     	MonitorInfo monitorAccount= new MonitorInfo(accountNum,time,ip,port);
     	i= currentUser;
     	if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
-    	if(monitorList.isEmpty()) {
+	//    	if(monitorList.isEmpty()) {
+	//    		monitorList.add(monitorAccount);
+	//    	}
+	//    	else{
+	//    		for(j=0;i<monitorList.size();j++) {
+	//    			if(monitorList.get(j).getAccountNum()==accountNum) {
+	//    				monitorList.get(j).setExpireTime(time);
+	//    				monitorList.get(j).setIP(ip);
+	//    				monitorList.get(j).setport(port);
+	//    				break;
+	//    			}
+	//    		}
+	//    		
+	//    		if(i==monitorList.size()) {
+	//    			monitorList.add(monitorAccount);
+	//    		}
+	//    	}
     		monitorList.add(monitorAccount);
-    	}
-    	else{
-    		for(j=0;i<monitorList.size();j++) {
-    			if(monitorList.get(j).getAccountNum()==accountNum) {
-    				monitorList.get(j).setExpireTime(time);
-    				monitorList.get(j).setIP(ip);
-    				monitorList.get(j).setport(port);
-    				break;
-    			}
-    		}
     		
-    		if(i==monitorList.size()) {
-    			monitorList.add(monitorAccount);
-    		}
-    	}
-    	replyMessage= "You have success register for monitor update";
-    	serviceReply(1,replyMessage,ip,port,replyPacketList);
-    	monitorUser(accountName+"has register for monitor update.",replyPacketList);
+	    	replyMessage= "You have success register for monitor update";
+	    	serviceReply(1,replyMessage,ip,port,replyPacketList);
+	    	monitorUser(accountName+"has register for monitor update.",replyPacketList);
     	}
         else {
         	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
@@ -222,7 +311,17 @@ public class AccountService {
     
     }
     
-    public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param accountNum
+     * @param accountName
+     * @param password
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @return
+     * @throws Exception
+     */
+    public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("acc num %d create acct name %s, passwd: %s acc list size: %d",accountNum,accountName,password,accountList.size()));
 
         int i;
@@ -255,7 +354,15 @@ public class AccountService {
     }
     
     
-    public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws IOException {
+    /**
+     * @param status
+     * @param message
+     * @param ip
+     * @param port
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
     	//DatagramSocket socket = new DatagramSocket(Server.getServerPort());
     	System.out.println(message);
     	//byte[] replyHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
@@ -269,8 +376,20 @@ public class AccountService {
 		replyPacketList.add(reply);
     }
 
-    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws IOException{
+    /**
+     * @param message
+     * @param replyPacketList
+     * @throws Exception
+     */
+    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
+        System.out.println("monitor list size: "+monitorList.size());
+        for(int k=0;k<monitorList.size();k++) {
+			System.out.println("monitor List:");
+			System.out.print(monitorList.get(k).getAccountNum());
+			System.out.print("   "+monitorList.get(k).getExpireTime());
+			System.out.println("     "+monitorList.get(k).getIP());
+		}
         LocalTime time = LocalTime.now();
         //DatagramSocket socket=new DatagramSocket(Server.getServerPort());
         //byte[] updateHead=DataProcess.intToBytes(1, ByteOrder.BIG_ENDIAN);
@@ -278,14 +397,18 @@ public class AccountService {
 
         //reply id, status, message length, message
         byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);
-        DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+       
         if(!monitorList.isEmpty()) {
         	for(int i=0; i<monitorList.size();i++) {
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {
+        			DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);
+        			System.out.println("packet for account: "+monitorList.get(i).getAccountNum()+"has add to packet list. IP: "+monitorList.get(i).getIP());
         			update.setAddress(monitorList.get(i).getIP());
         			update.setPort(monitorList.get(i).getPort());
+        			System.out.println("IP for update packet:"+update.getAddress());
         			//socket.send(update);
         			replyPacketList.add(update);
+        			System.out.println("reply List size: "+replyPacketList.size());
         		}
         		else {
         			monitorList.remove(i);
@@ -298,18 +421,30 @@ public class AccountService {
 
 
 
+    /**
+     * @return
+     */
     public int getAccountNumber() {
         return accountNumber;
     }
 
+    /**
+     * @param accountNumber
+     */
     public void setAccountNumber(int accountNumber) {
         this.accountNumber = accountNumber;
     }
 
+    /**
+     * @return
+     */
     public ArrayList<Account> getAccountList() {
         return accountList;
     }
 
+    /**
+     * @param accountList
+     */
     public void setAccountList(ArrayList<Account> accountList) {
         this.accountList = accountList;
     }

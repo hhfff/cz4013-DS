@@ -1,5 +1,9 @@
 import java.util.*;
 
+/**
+ * @author LONG
+ *
+ */
 public class Account {
 	private int accountNum;
 	private String accountName;
@@ -9,6 +13,12 @@ public class Account {
 	public Account() {
 		// TODO Auto-generated constructor stub
 	}
+	/**
+	 * @param accountNum
+	 * @param accountName
+	 * @param passwd
+	 * @param saving
+	 */
 	public Account(int accountNum, String accountName, String passwd, Map saving) {
 		 this.accountNum= accountNum;
 		 this.accountName= accountName;
