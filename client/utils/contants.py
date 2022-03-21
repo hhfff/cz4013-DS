@@ -1,9 +1,9 @@
 from enum import Enum
-SERVER_HOST = '192.168.2.2'
+SERVER_HOST = '127.0.0.1' #'192.168.2.2'
 SERVER_PORT = 54088
 SOCKET_BUFFER = 4096
 
-PacketLossProbability = 0.9
+PacketLossProbability = 0.5
 timeout = 5
 
 # class Method(Enum):

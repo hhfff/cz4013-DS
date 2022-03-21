@@ -5,6 +5,7 @@
 from utils import contants,protocol
 from utils.contants import Method
 import utils.services as Services
+from utils.systemPrint import ErrorMsg, SystemMsg
 
 def main():
     promptServerAddress()
@@ -19,7 +20,7 @@ def promptServerAddress():
     while True:
         ans = input("Do you want to change? (Y/N)").lower()
         if ans not in ['y','n']:
-            print("Invalid Input! Please Try again.")
+            ErrorMsg("Invalid Input! Please Try again.")
         else:
             if ans == 'y':
                 serverHost = input("Enter Server Host:").lower()
@@ -45,7 +46,7 @@ def selectService():
                 inputStr = int(inputStr)
                 opsID = Method(inputStr)
             except ValueError:
-                print("Invalid input! Please Try again.")
+                ErrorMsg("Invalid input! Please Try again.")
                 continue
 
             if opsID == Method.CREATE_ACCOUNT:
@@ -63,9 +64,9 @@ def selectService():
             elif opsID == Method.MONITOR:
                 status = Services.monitor_service()
             if status:
-                print("Service completed")
+                SystemMsg("Service completed")
             else:
-                print("Something wrong")
+                SystemMsg("Something wrong")
             break
 
 

@@ -15,7 +15,6 @@ class Marshalling:
     @classmethod
     def unmarshall(cls,buffer: bytearray,paraTypeOrder:tuple) -> list:
         #buffer contain server address,
-        buffer=buffer[0]
         unmarshall_data = []
         ptr = 0 
         for data_type in paraTypeOrder:

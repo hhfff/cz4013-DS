@@ -1,12 +1,13 @@
 # TO Do
 #
 import time
-from tkinter import E
+# from tkinter import E
 from typing import Tuple
 from utils.UDPhelper import UDPSocket,TimeoutError
 from utils.marshalling import Marshalling
 from utils.contants import Method,Network,PacketLossProbability,timeout
 from random import random # generate number [0,1]
+from utils.systemPrint import ErrorMsg, ServerReply, SystemMsg
 
 
 def setServerAddress(host,port):
@@ -22,17 +23,17 @@ def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
         # print((Network.Request.value,UDPSocket.request_id,methodCode.value,*dataTuple)) 
         # print("-------------------------------------------")
         while True:
-            UDPSocket.settimeout(timeout)
+            UDPSocket.set_timeout(timeout)
             # simulate packet loss with certain probability
             if (random() >= PacketLossProbability) :
                 UDPSocket.send_msg(marshalled_data)            
             else:
-                print("Packet Loss")
+                ErrorMsg("Packet Loss")
             try:                
-                reply_data = _waitForReply(methodCode,receiveParaTypeOder)  
+                reply_data = _waitForReply(methodCode,receiveParaTypeOder) 
                 return True,reply_data[1:]                     
             except TimeoutError:
-                print(f"No message from server after {timeout} seconds. Packet will be resended!")
+                ErrorMsg(f"No message from server after {timeout} seconds. Packet will be resended!")
 
 
         # frist two item reply id , status
@@ -43,8 +44,7 @@ def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
 
 
 def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
-    bytearray_data = UDPSocket.listen_msg()
-    
+    bytearray_data = UDPSocket.recv_msg()    
     list_data = Marshalling.unmarshall(bytearray_data,(int,*paraTypeOrder))
     # print("Raw msg from server")
     # print("-------------------------------------------")
@@ -67,15 +67,15 @@ def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeO
             
             
             reply_data = _waitForReply(methodCode,receiveParaTypeOder)
-            end = time.time()
-            print("Server:",reply_data[2])    
+            end = time.time()            
+            ServerReply(reply_data[2])    
             if reply_data[1] == 0:
                 return False     
 
             # update timeout 
             UDPSocket.set_timeout(end_time -end)
     except TimeoutError:
-        print("Your Subscription expired.")
+        SystemMsg("Your Subscription expired.")
         return True
     except Exception as e:
         print(str(e))

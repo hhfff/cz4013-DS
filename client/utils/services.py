@@ -1,22 +1,23 @@
-from xmlrpc.client import Boolean
+# from xmlrpc.client import Boolean, Server
 from utils import protocol,contants
+from utils.systemPrint import ErrorMsg, ServerReply
 
 def _login_service():
     while True:
         accNum = input("Please enter your bank account number:")
         if not accNum.isdigit():
-            print("Account number has to be in digit")
+            ErrorMsg("Account number has to be in digit")
             continue
         accName = input("Please enter your account name:")
         pw = input("Please enter your password:")
         if len(pw)>4:
-            print("Password cannot more than 4 characters. Please try again.")
+            ErrorMsg("Password cannot more than 4 characters. Please try again.")
             continue
         accNum = int(accNum)
         succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,accNum,accName),(int,str))
 
         if succ:
-            print(msg[1])
+            ServerReply(msg[1])
             if msg[0] == 1:
                 return True, (pw,accNum,accName)
             else:            
@@ -27,13 +28,10 @@ def _login_service():
 
 def create_account_service():
     while True:
-        accName = input("Please enter an account name:")
-        if not accNum.isdigit():
-            print("Account number has to be in digit")
-            continue
+        accName = input("Please enter an account name:")        
         pw = input("Please enter your password:")
         if len(pw)>4:
-            print("Password cannot more than 4 characters. Please try again.")
+            ErrorMsg("Password cannot more than 4 characters. Please try again.")
             continue
         re_pw = input("Please re-enter your password:")
         if pw == re_pw:            
@@ -47,18 +45,18 @@ def create_account_service():
                     curreny_type_input = input(f"Please select initial curreny type:")
                     curreny_type = contants.Currency(int(curreny_type_input))
                 except ValueError:
-                    print("Invalid type! Please Try again.")
+                    ErrorMsg("Invalid type! Please Try again.")
                     continue
                 try:
                     curreny_amt_input = input(f"Please select initial ammount ({curreny_type.name}):")
                     curreny_amt = float(curreny_amt_input)
                     break
                 except ValueError:
-                    print("Invalid input! Please Try again.")
+                    ErrorMsg("Invalid input! Please Try again.")
                     continue
             succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,curreny_type.value,curreny_amt,accName),(int,str))             
             if succ:
-                print("Server:",msg[1])
+                ServerReply(msg[1])
                 if msg[0] == 1:
                     return True
                 else:                    
@@ -67,7 +65,7 @@ def create_account_service():
 
                 return False
         else:
-            print("Passwords does not match. Please re-enter all details.")
+            ErrorMsg("Passwords does not match. Please re-enter all details.")
 
 
 def close_account_service():
@@ -78,7 +76,7 @@ def close_account_service():
     if confirm.lower() not in ['N','n']:
         succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,(*user_cred[:-1],user_cred[-1]),(int,str))                    
         if succ:
-            print("Server:",msg[1])
+            ServerReply(msg[1])
             if msg[0] == 1:
                 return True
             else:                
@@ -102,18 +100,18 @@ def deposite_service():
             curreny_type_input = input(f"Please enter deposite curreny type:")
             curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
-            print("Invalid type! Please Try again.")
+            ErrorMsg("Invalid type! Please Try again.")
             continue
         try:
             curreny_amt_input = input(f"Please select deposite amount ({curreny_type.name}):")
             curreny_amt = float(curreny_amt_input)
             break
         except ValueError:
-            print("Invalid input! Please Try again.")
+            ErrorMsg("Invalid input! Please Try again.")
             continue
     succ, msg = protocol.sendRequest(contants.Method.DEPOSITE,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print("Server:",msg[1])
+        ServerReply(msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -136,18 +134,18 @@ def withdraw_service():
             curreny_type_input = input(f"Please enter withdraw curreny type:")
             curreny_type = contants.Currency(int(curreny_type_input))
         except ValueError:
-            print("Invalid type! Please Try again.")
+            ErrorMsg("Invalid type! Please Try again.")
             continue
         try:
             curreny_amt_input = input(f"Please select withdraw amount ({curreny_type.name}):")
             curreny_amt = float(curreny_amt_input)
             break
         except ValueError:
-            print("Invalid input! Please Try again.")
+            ErrorMsg("Invalid input! Please Try again.")
             continue
     succ, msg = protocol.sendRequest(contants.Method.WITHDRAW,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print("Server:",msg[1])
+        ServerReply(msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -163,7 +161,7 @@ def view_balance_service():
 
     succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred,(int,str))      
     if succ:
-        print("Server:",msg[1])
+        ServerReply(msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -187,18 +185,18 @@ def currency_exchange_service():
             tar_curreny_type_input = input(f"Please enter target curreny type:")
             tar_curreny_type = contants.Currency(int(tar_curreny_type_input))
         except ValueError:
-            print("Invalid type! Please Try again.")
+            ErrorMsg("Invalid type! Please Try again.")
             continue
         try:
             curreny_amt_input = input(f"Please select exchange amount ({src_curreny_type.name}):")
             curreny_amt = float(curreny_amt_input)
             break
         except ValueError:
-            print("Invalid input! Please Try again.")
+            ErrorMsg("Invalid input! Please Try again.")
             continue
     succ, msg = protocol.sendRequest(contants.Method.CURRENCY_EXCHANGE,(*user_cred[:-1],src_curreny_type.value,tar_curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
-        print("Server:",msg[1])
+        ServerReply(msg[1])
         if msg[0] == 1:
             return True
         else:                
@@ -220,7 +218,7 @@ def monitor_service():
             intervalTime = int(intervalTime)
             break
         except ValueError:
-            print("Invalid input! Please Try again.")
+            ErrorMsg("Invalid input! Please Try again.")
             continue
     succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred[:-1],intervalTime,user_cred[-1]),(int,str))
     return succ
