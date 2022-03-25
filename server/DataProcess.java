@@ -26,12 +26,23 @@ public class DataProcess {
         );
     }*/
 
+    /**
+     * @param data
+     * @param byteOrder
+     * @return
+     */
     public static byte[] intToBytes(int data,ByteOrder byteOrder) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
         byteBuffer.order(byteOrder);
         byteBuffer.putInt(data);
         return  byteBuffer.array();
     }
+    /**
+     * @param buf
+     * @param start
+     * @param byteOrder
+     * @return
+     */
     public static int bytesToInt(byte[] buf,int start,ByteOrder byteOrder) {
         byte[] bytes = new byte[length];
         for(int i = 0; i < length; i++) {
@@ -43,6 +54,11 @@ public class DataProcess {
         byteBuffer.flip();
         return byteBuffer.getInt();
     }
+    /**
+     * @param data
+     * @param byteOrder
+     * @return
+     */
     public static byte[] doubleToBytes(double data,ByteOrder byteOrder){
         ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES);
         byteBuffer.order(byteOrder);
@@ -50,6 +66,12 @@ public class DataProcess {
         return  byteBuffer.array();
     }
 
+    /**
+     * @param buf
+     * @param start
+     * @param byteOrder
+     * @return
+     */
     public static double bytesToDouble(byte[] buf,int start,ByteOrder byteOrder){
         byte[] bytes = new byte[length*2];
         for(int i = 0; i < length*2; i++) {
@@ -65,6 +87,10 @@ public class DataProcess {
 
 
     //string no need consider byte order
+    /**
+     * @param str
+     * @return
+     */
     public static byte[] stringToBytes(String str) {
         /*
 
@@ -92,6 +118,12 @@ public class DataProcess {
         }*/
         return str.getBytes(StandardCharsets.UTF_8);
     }
+    /**
+     * @param buf
+     * @param start
+     * @param numberOfByteToRead
+     * @return
+     */
     public static String bytesToString(byte[] buf,int start,int numberOfByteToRead) {
         byte[] bytes = new byte[numberOfByteToRead];
         for(int i = 0; i < numberOfByteToRead; i++) {
@@ -118,6 +150,9 @@ public class DataProcess {
 
 
 
+    /**
+     * @param bytes
+     */
     public static void printByteToHex(byte[] bytes){
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
@@ -128,6 +163,12 @@ public class DataProcess {
 
     // remove msg type and request id which is 8 byte + method id(4 byte) so start from 12 byte
     // passwd(4 byte, 4 char),currency type(int, 4 byte), init_amount(double), name_length(int 4 byte), name(string variable)
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalCreateAccount(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -154,6 +195,12 @@ public class DataProcess {
     }
 
     //passwd(4 byte, 4 char), acct number(int), name(string variable)
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalCloseAccount(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -173,6 +220,12 @@ public class DataProcess {
         return hashMap;
     }
     //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalDeposite(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -198,6 +251,12 @@ public class DataProcess {
         return hashMap;
     }
     //passwd(4 byte, 4 char), acct number(int), currency type(int),amt(double),name(string variable)
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalWithdraw(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -223,6 +282,13 @@ public class DataProcess {
         return hashMap;
     }
     //passwd(4 byte, 4 char), acct number(int),name(string variable)
+    
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalViewBalance(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -243,6 +309,12 @@ public class DataProcess {
     }
 
     //passwd(4 byte, 4 char), acct number(int), currency from type(int),currency to type(int), amount(double),amt(double),name(string variable)
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalCurrencyExchange(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -271,6 +343,12 @@ public class DataProcess {
 
     // interval in seconds
     //
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalMonitor(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -297,6 +375,12 @@ public class DataProcess {
         return hashMap;
     }
     // password, acctNum,name
+    /**
+     * @param buf
+     * @param startByte
+     * @return
+     * @throws Exception
+     */
     public static HashMap<String,Object> unmarshalUserVerification(byte[] buf,int startByte) throws Exception{
         HashMap<String,Object> hashMap=new HashMap<>();
         int passLength=bytesToInt(buf,startByte,ByteOrder.BIG_ENDIAN);
@@ -318,6 +402,10 @@ public class DataProcess {
 
 
 
+    /**
+     * @param obj
+     * @return
+     */
     public static byte[] marshal(Object ...obj){
         List<Byte> bytesList=new ArrayList<>();
         for(Object o :obj){

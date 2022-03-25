@@ -20,6 +20,7 @@ public class Server{
     private AccountService accountService;
     private ArrayList<DatagramPacket> replyPacketList;
     private static int serverPort=54088;
+    private double packetChance = 0.6;
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
@@ -85,7 +86,7 @@ public class Server{
             try {
                 System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
                 chance=Math.random();
-                if(chance<=0.7) {
+                if(chance<=packetChance) {
                 System.out.println("send out success chance is: "+chance);
                   socket.send(packet);
                 }
@@ -97,21 +98,21 @@ public class Server{
         replyPacketList.clear();
     }
     private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
-        //msg type(4 byte, 0 or 1), request id(from client), method type
+
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
         System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID);
         //checking history
-        for(History history: histories){
-            if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
-                //found in history, just reply
-                //socket.send(new DatagramPacket(data,data.length,ip,port));
-                replyPacketList.add(history.getReplyPacket());
-                System.out.println("found in history");
-                sendPacket();
-                return ;
-            }
-        }
+//        for(History history: histories){
+//            if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
+//                //found in history, just reply
+//                //socket.send(new DatagramPacket(data,data.length,ip,port));
+//                replyPacketList.add(history.getReplyPacket());
+//                System.out.println("found in history");
+//                sendPacket();
+//                return ;
+//            }
+//        }
         //String msg=null;
         //todo  write error catch
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
@@ -155,7 +156,7 @@ public class Server{
 
             }else if(method==Method.WITHDRAW.getValue()){
                 var data=DataProcess.unmarshalWithdraw(buf,12);
-                accountService.wthdrawFromAccount(
+                accountService.withdrawFromAccount(
                         (int) data.get("acctNum"),
                         (String) data.get("name"),
                         (String) data.get("password"),
