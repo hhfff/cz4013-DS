@@ -86,11 +86,9 @@ public class Server{
             try {
                 System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
                 chance=Math.random();
-<<<<<<< Updated upstream
+
                 if(chance<=packetChance) {
-=======
-                if(chance<=0.7) {
->>>>>>> Stashed changes
+
                 System.out.println("send out success chance is: "+chance);
                   socket.send(packet);
                 }
