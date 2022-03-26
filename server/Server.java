@@ -24,6 +24,10 @@ public class Server{
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
+
+    /**
+     * initialize
+     */
     public Server(){
         histories=new ArrayList<>();
         replyPacketList=new ArrayList<>();
@@ -35,6 +39,9 @@ public class Server{
         }
     }
 
+    /**
+     * start loop the server and dispatch received data to processData method, the data cleaned after every loop
+     */
     public void start(){
         while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
@@ -65,6 +72,10 @@ public class Server{
         }
         return ret;
     }
+
+    /**
+     * send packet in packet list to client, use chance to simulate packet lost
+     */
     private void sendPacket(){
         double chance;
     	for(DatagramPacket packet:replyPacketList){
@@ -84,22 +95,30 @@ public class Server{
         }
         replyPacketList.clear();
     }
+
+    /**
+     * This method process different service type
+     * @param buf
+     * @param ip
+     * @param port
+     * @throws IOException
+     */
     private void processData(byte[] buf, InetAddress ip, int port) throws IOException{
 
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
         System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID);
         //checking history
-//        for(History history: histories){
-//            if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
-//                //found in history, just reply
-//                //socket.send(new DatagramPacket(data,data.length,ip,port));
-//                replyPacketList.add(history.getReplyPacket());
-//                System.out.println("found in history");
-//                sendPacket();
-//                return ;
-//            }
-//        }
+        for(History history: histories){
+            if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
+                //found in history, just reply
+                //socket.send(new DatagramPacket(data,data.length,ip,port));
+                replyPacketList.add(history.getReplyPacket());
+                System.out.println("found in history");
+                sendPacket();
+                return ;
+            }
+        }
         //String msg=null;
         //todo  write error catch
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
@@ -129,7 +148,7 @@ public class Server{
 
                 );
             }else if(method==Method.DEPOSITE.getValue()){
-                var data=DataProcess.unmarshalDeposite(buf,12);
+                var data=DataProcess.unmarshalDeposit(buf,12);
                 accountService.depositToAccount(
                         (int) data.get("acctNum"),
                         (String) data.get("name"),
