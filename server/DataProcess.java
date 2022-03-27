@@ -27,9 +27,9 @@ public class DataProcess {
     }*/
 
     /**
-     * @param data
-     * @param byteOrder
-     * @return
+     * @param data		integer that want to convert to byte array.
+     * @param byteOrder	order of byte array, in this project was Big Endian.	order of byte array, in this project was Big Endian.
+     * @return			byte array.
      */
     public static byte[] intToBytes(int data,ByteOrder byteOrder) {
         ByteBuffer byteBuffer = ByteBuffer.allocate(Integer.BYTES);
@@ -40,8 +40,8 @@ public class DataProcess {
     /**
      * @param buf
      * @param start
-     * @param byteOrder
-     * @return
+     * @param byteOrder	order of byte array, in this project was Big Endian.
+     * @return			byte array.
      */
     public static int bytesToInt(byte[] buf,int start,ByteOrder byteOrder) {
         byte[] bytes = new byte[length];
@@ -56,8 +56,8 @@ public class DataProcess {
     }
     /**
      * @param data
-     * @param byteOrder
-     * @return
+     * @param byteOrder	order of byte array, in this project was Big Endian.
+     * @return			byte array.
      */
     public static byte[] doubleToBytes(double data,ByteOrder byteOrder){
         ByteBuffer byteBuffer = ByteBuffer.allocate(Double.BYTES);
@@ -69,8 +69,8 @@ public class DataProcess {
     /**
      * @param buf
      * @param start
-     * @param byteOrder
-     * @return
+     * @param byteOrder	order of byte array, in this project was Big Endian.
+     * @return			byte array.
      */
     public static double bytesToDouble(byte[] buf,int start,ByteOrder byteOrder){
         byte[] bytes = new byte[length*2];
@@ -88,8 +88,8 @@ public class DataProcess {
 
     //string no need consider byte order
     /**
-     * @param str
-     * @return
+     * @param str	
+     * @return		byte array.
      */
     public static byte[] stringToBytes(String str) {
         /*
@@ -164,7 +164,7 @@ public class DataProcess {
     // remove msg type and request id which is 8 byte + method id(4 byte) so start from 12 byte
     // passwd(4 byte, 4 char),currency type(int, 4 byte), init_amount(double), name_length(int 4 byte), name(string variable)
     /**
-     * @param buf
+     * @param buf			byte array received from client
      * @param startByte
      * @return
      * @throws Exception
@@ -344,6 +344,7 @@ public class DataProcess {
     // interval in seconds
     //
     /**
+     * 
      * @param buf
      * @param startByte
      * @return

@@ -1,7 +1,7 @@
 # from xmlrpc.client import Boolean, Server
 from utils import protocol,contants
 from utils.systemPrint import ErrorMsg, ServerReply
-
+import getpass
 def _login_service():
     while True:
         accNum = input("Please enter your bank account number:")
@@ -9,7 +9,8 @@ def _login_service():
             ErrorMsg("Account number has to be in digit")
             continue
         accName = input("Please enter your account name:")
-        pw = input("Please enter your password:")
+        #pw = input("Please enter your password:")
+        pw = getpass.getpass("Please enter your password:")
         if len(pw)>4:
             ErrorMsg("Password cannot more than 4 characters. Please try again.")
             continue
@@ -29,11 +30,13 @@ def _login_service():
 def create_account_service():
     while True:
         accName = input("Please enter an account name:")        
-        pw = input("Please enter your password:")
+        #pw = input("Please enter your password:")
+        pw = getpass.getpass("Please enter your password:")
         if len(pw)>4:
             ErrorMsg("Password cannot more than 4 characters. Please try again.")
             continue
-        re_pw = input("Please re-enter your password:")
+        #re_pw = input("Please re-enter your password:")
+        re_pw = getpass.getpass("Please re-enter your password:")
         if pw == re_pw:            
             print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
             print(f"{contants.Currency.MYR.value} | Malaysian ringgit")
