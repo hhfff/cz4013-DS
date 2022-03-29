@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Scanner;
 
 public class Server{
     private DatagramSocket socket;
@@ -21,7 +22,7 @@ public class Server{
     private ArrayList<DatagramPacket> replyPacketList;		//Array list use to store packet for sent to client  
     private static int serverPort=54088;					//service port number
     private double packetChance = 0.5;						//The probability that a packet is sent successfully.
-
+    private int select;
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
 
@@ -43,7 +44,25 @@ public class Server{
      * start loop the server and dispatch received data to processData method, the data cleaned after every loop
      */
     public void start(){
-        while(true){
+       Scanner userSelect = new Scanner(System.in); 
+       System.out.println("Please select Invocation Semantics.");
+       System.out.println("0. At-Least-Once");
+       System.out.println("1. At-Most-Once\n");
+       select = userSelect.nextInt();
+       while(select!=0 && select !=1) {
+    	   System.out.println("Sorry, You have enter a invalid input. Plase try again.");
+    	   System.out.println("Please select Invocation Semantics.");
+           System.out.println("0. At-Least-Once");
+           System.out.println("1. At-Most-Once");
+           select = userSelect.nextInt();
+       }
+       if(select == 0) {
+    	   System.out.println("Server Running with At-Least-Once Invocation Semantics.");
+       }
+       else if(select == 1) {
+    	   System.out.println("Server Running with At-Most-Once Invocation Semantics.\n");
+       }
+    	while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
             try {
 
@@ -110,6 +129,7 @@ public class Server{
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
         System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID);
+        if(select==1) {
         //checking history
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
@@ -120,6 +140,7 @@ public class Server{
                 sendPacket();
                 return ;
             }
+        }
         }
         //String msg=null;
         //todo  write error catch

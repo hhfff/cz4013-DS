@@ -143,7 +143,7 @@ public class DataProcess {
         for(int i = 0; i < numberOfByteToRead; i++) {
             bytes[i] = buf[start+i];
         }
-        printByteToHex(bytes);
+        //printByteToHex(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
 
     }
