@@ -102,7 +102,7 @@ public class Server{
             try {
                 System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
                 chance=Math.random();		//generate a random number from 0.0 to 1.0. 								
-                System.out.println("send out success chance is: "+chance);
+               // System.out.println("send out success chance is: "+chance);
                 
                 if(chance<=packetChance) {	//only when random number smaller than packetChance then the packet will send out.  
                 
