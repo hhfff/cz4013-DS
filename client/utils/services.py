@@ -2,19 +2,23 @@
 from utils import protocol,contants
 from utils.systemPrint import ErrorMsg, ServerReply
 import getpass
+
 def _login_service():
+    '''Authentication Service'''
     while True:
         accNum = input("Please enter your bank account number:")
         if not accNum.isdigit():
             ErrorMsg("Account number has to be in digit")
             continue
-        accName = input("Please enter your account name:")
-        #pw = input("Please enter your password:")
+        accName = input("Please enter your account name:")        
         pw = getpass.getpass("Please enter your password:")
         if len(pw)>4:
             ErrorMsg("Password cannot more than 4 characters. Please try again.")
             continue
         accNum = int(accNum)
+
+        # server method parameters: password, account number, account name
+        # expected server response data type: execution status (int), message (str)
         succ, msg = protocol.sendRequest(contants.Method.USER_VERIFICATION,(pw,accNum,accName),(int,str))
 
         if succ:
@@ -28,14 +32,13 @@ def _login_service():
             return False,()
 
 def create_account_service():
+    '''open new account service'''
     while True:
-        accName = input("Please enter an account name:")        
-        #pw = input("Please enter your password:")
+        accName = input("Please enter an account name:")                
         pw = getpass.getpass("Please enter your password:")
         if len(pw)>4:
             ErrorMsg("Password cannot more than 4 characters. Please try again.")
-            continue
-        #re_pw = input("Please re-enter your password:")
+            continue        
         re_pw = getpass.getpass("Please re-enter your password:")
         if pw == re_pw:            
             print(f"{contants.Currency.CNY.value} | Chinese yuan renminbi")
@@ -45,19 +48,22 @@ def create_account_service():
                         
             while True:
                 try:
-                    curreny_type_input = input(f"Please select initial curreny type:")
-                    curreny_type = contants.Currency(int(curreny_type_input))
+                    currency_type_input = input(f"Please select initial curreny type:")
+                    currency_type = contants.Currency(int(currency_type_input))
                 except ValueError:
                     ErrorMsg("Invalid type! Please Try again.")
                     continue
                 try:
-                    curreny_amt_input = input(f"Please select initial ammount ({curreny_type.name}):")
+                    curreny_amt_input = input(f"Please select initial ammount ({currency_type.name}):")
                     curreny_amt = float(curreny_amt_input)
                     break
                 except ValueError:
                     ErrorMsg("Invalid input! Please Try again.")
                     continue
-            succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,curreny_type.value,curreny_amt,accName),(int,str))             
+
+            # server method parameters: password, currency account name, currency type, amount, account name
+            # expected server response data type: execution status (int), message (str)
+            succ, msg = protocol.sendRequest(contants.Method.CREATE_ACCOUNT,(pw,currency_type.value,curreny_amt,accName),(int,str))             
             if succ:
                 ServerReply(msg[1])
                 if msg[0] == 1:
@@ -70,13 +76,18 @@ def create_account_service():
         else:
             ErrorMsg("Passwords does not match. Please re-enter all details.")
 
-
 def close_account_service():
+    '''closs account service'''
     logged_in = False
     while not logged_in:
-        logged_in, user_cred = _login_service()        
+        # user_cred: password, account number, account name
+        logged_in, user_cred = _login_service() 
+
     confirm  = input("Are you sure you want to close current logged in account: (Enter 'N' or 'n' to cancel)")
     if confirm.lower() not in ['N','n']:
+
+        # server method parameters: password, account number, account name
+        # expected server response data type: execution status (int), message (str)
         succ, msg =protocol.sendRequest(contants.Method.CLOSE_ACCOUNT,(*user_cred[:-1],user_cred[-1]),(int,str))                    
         if succ:
             ServerReply(msg[1])
@@ -90,8 +101,8 @@ def close_account_service():
     else:
         return True
             
-
 def deposite_service():
+    '''Deposit money service'''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -112,6 +123,9 @@ def deposite_service():
         except ValueError:
             ErrorMsg("Invalid input! Please Try again.")
             continue
+
+    # server method parameters: password, account number, currency type, amount, account name
+    # expected server response data type: execution status (int), message (str)
     succ, msg = protocol.sendRequest(contants.Method.DEPOSITE,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
         ServerReply(msg[1])
@@ -123,9 +137,8 @@ def deposite_service():
 
         return False            
 
-
-
 def withdraw_service():
+    '''Withdraw money service'''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -146,6 +159,9 @@ def withdraw_service():
         except ValueError:
             ErrorMsg("Invalid input! Please Try again.")
             continue
+    
+    # server method parameters: password, account number, currency type, amount, account name
+    # expected server response data type: execution status (int), message (str)
     succ, msg = protocol.sendRequest(contants.Method.WITHDRAW,(*user_cred[:-1],curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
         ServerReply(msg[1])
@@ -156,12 +172,15 @@ def withdraw_service():
     else:
 
         return False   
-    
+
 def view_balance_service():
+    '''view account balance service '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
 
+    # server method parameters: password, account number, account name
+    # expected server response data type: execution status (int), message (str)
     succ, msg =protocol.sendRequest(contants.Method.VIEW_BALANCE,user_cred,(int,str))      
     if succ:
         ServerReply(msg[1])
@@ -173,8 +192,8 @@ def view_balance_service():
 
         return False
 
-
 def currency_exchange_service():
+    '''Currency exchange service'''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -197,6 +216,10 @@ def currency_exchange_service():
         except ValueError:
             ErrorMsg("Invalid input! Please Try again.")
             continue
+
+    # server method parameters: password, account number, scource currency type, target currency type,
+    #                           exchange amount, account name
+    # expected server response data type: execution status (int), message (str)
     succ, msg = protocol.sendRequest(contants.Method.CURRENCY_EXCHANGE,(*user_cred[:-1],src_curreny_type.value,tar_curreny_type.value,curreny_amt,user_cred[-1]),(int,str)) 
     if succ:
         ServerReply(msg[1])
@@ -208,9 +231,8 @@ def currency_exchange_service():
 
         return False  
     
-
 def monitor_service():
-    # https://github.com/Brabalawuka/CZ4013-Distributed-System-Project/blob/main/cz4013_client/helpers/udp_client.py
+    '''Monitoring service'''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -223,6 +245,9 @@ def monitor_service():
         except ValueError:
             ErrorMsg("Invalid input! Please Try again.")
             continue
+
+    # server method parameters: password, account number, monitor interval, account name
+    # expected server response data type: execution status (int), message (str)
     succ = protocol.longRequest(contants.Method.MONITOR,intervalTime,(*user_cred[:-1],intervalTime,user_cred[-1]),(int,str))
     return succ
         

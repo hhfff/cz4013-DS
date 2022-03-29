@@ -1,7 +1,4 @@
-# Reference
-# https://github.com/lolfuljames/Distributed-Systems-FacilityBooking/blob/main/src/client/Client.java
-# https://github.com/felixputera/cz4013-flight-info/blob/master/client/main.py
-# https://github.com/Brabalawuka/CZ4013-Distributed-System-Project/blob/6ebd7086109d0a82f44da1ac7006aa2085e62372/cz4013_client/utils/styled_printing.py#L34
+
 from utils import contants,protocol
 from utils.contants import Method
 import utils.services as Services
@@ -32,6 +29,7 @@ def promptServerAddress():
 
 def selectService():
     while True:
+        # Main Menu
         print(f"{Method.CREATE_ACCOUNT.value} | Open a new account")
         print(f"{Method.CLOSE_ACCOUNT.value} | Close account")
         print(f"{Method.DEPOSITE.value} | Deposit money to account")
@@ -39,9 +37,14 @@ def selectService():
         print(f"{Method.VIEW_BALANCE.value} | View account balance")
         print(f"{Method.CURRENCY_EXCHANGE.value} | Exchange account currency type")    
         print(f"{Method.MONITOR.value} | Monitor server")
+        print(f"0 | Exit")
        
-        while True:
+        # Get user input
+        while True:            
             inputStr = input("Please select a service:")
+            if int(inputStr) == 0:
+                print("Thank you for using.")
+                exit()
             try:
                 inputStr = int(inputStr)
                 opsID = Method(inputStr)

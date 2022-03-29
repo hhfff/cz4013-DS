@@ -5,16 +5,18 @@ class Marshalling:
 
     @classmethod
     def marshall(cls,data: tuple) -> bytearray:
+        '''marshall data to byte array'''      
         marshalled_data = bytearray()
+
+        # convert every data element to bytes 
         for item in data:
-            marshalled_data += cls.toBytes(item)
-            #marshalled_data.extend(cls.toBytes(item))
+            marshalled_data += cls.toBytes(item)            
 
         return marshalled_data
 
     @classmethod
-    def unmarshall(cls,buffer: bytearray,paraTypeOrder:tuple) -> list:
-        #buffer contain server address,
+    def unmarshall(cls,buffer: bytearray,paraTypeOrder:tuple) -> list:  
+        '''Unmarshall bytearray to list of data element following the data element type list: paraTypeOrder'''            
         unmarshall_data = []
         ptr = 0 
         for data_type in paraTypeOrder:
@@ -33,7 +35,8 @@ class Marshalling:
         return unmarshall_data
 
     @classmethod
-    def toBytes(cls, data)-> bytes:        
+    def toBytes(cls, data)-> bytes:  
+        '''Convert a data to bytes based on the data type: int, float or string'''      
         # < little-endian
         # > big-endian
 
@@ -42,10 +45,13 @@ class Marshalling:
         elif isinstance(data,float):
             return struct.pack('>d', data)
         elif isinstance(data,str):
+            # length of string is append before actual string content
             return struct.pack('>i', len(data)) + bytes(data.encode('utf-8'))
         else:
             raise Exception(f'Unsupported data type {type(data)} for marshalling')
 
+
+# code for test purpose
 if __name__ == '__main__':
     msg_byteArray = Marshalling.marshall((0,123,456.789,"abcdefg"))
     msg = Marshalling.unmarshall(msg_byteArray,(int,int,float,str))
