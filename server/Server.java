@@ -128,7 +128,8 @@ public class Server{
 
         int msgType=DataProcess.bytesToInt(buf,0,ByteOrder.BIG_ENDIAN);
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
-        System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID);
+        int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);	//extract and unmarshal method id from byte array.
+        System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID +" Service: "+Method.getmethod(method));
         if(select==1) {
         //checking history
         for(History history: histories){
@@ -144,7 +145,7 @@ public class Server{
         }
         //String msg=null;
         //todo  write error catch
-        int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);	//extract and unmarshal method id from byte array.
+        
         // call method based on method id.
         try{
             //todo need to catch those argument order error?

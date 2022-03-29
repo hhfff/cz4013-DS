@@ -19,5 +19,30 @@ public enum Method {
     public int getValue(){
         return value;
     }
+    public static Method getmethod(int value) {
+		Method m = Method.CREATE_ACCOUNT;
+    	switch(value) {
+		case 1 : m = Method.CREATE_ACCOUNT;
+				 break;
+		case 2 : m = Method.CLOSE_ACCOUNT;
+				 break;
+		case 3 : m = Method.DEPOSITE;
+				 break;
+		case 4 : m = Method.WITHDRAW;
+				 break;
+		case 5 : m = Method.WITHDRAW;
+				 break;
+		case 6 : m = Method.WITHDRAW;
+				 break;
+		case 7 : m = Method.WITHDRAW;
+				 break;
+		case 8 : m =  Method.WITHDRAW;
+				 break;
+		
+		}
+		return m;
+    	
+    	
+    }
 
 }
