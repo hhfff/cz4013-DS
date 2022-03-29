@@ -365,6 +365,7 @@ public class AccountService {
     }
 
     /**
+     * This method will prepare data packet to send update to user who register for monitor update.
      * @param message	message use to send to other client who register for Monitor.
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
