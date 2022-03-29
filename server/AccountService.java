@@ -9,13 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author LONG
- *
- */
+
 /**
  * This class will contain all the service that server provide to client.
- * @author LONG
+ * @author 
  *
  */
 public class AccountService {
@@ -23,25 +20,25 @@ public class AccountService {
      * 
      */
     private int accountNumber=0;	// account number increase 1 after each account created.
-    private int currentUser=-1;		//use to indicate client who currently use the service.
+    private int currentclient=-1;		//use to indicate client who currently use the service.
     private ArrayList<Account> accountList = new ArrayList<Account>();		//list to store all account information.
     private ArrayList<MonitorInfo> monitorList = new ArrayList<MonitorInfo>();	//list use to store the client register for update monitor.
 
     public AccountService(){}
     
     /**
-     * This method use for create a new account for user.
+     * This method use for create a new account for client.
      * @param accountName   name of the account holder.
      * @param password		Account password
      * @param currency		Currency of initial balance
      * @param balance  		Amount of money in account
-     * @param ip    		IP address of current user
-     * @param port    		Port number that current user used 
+     * @param ip    		IP address of current client
+     * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out. 
      * @throws Exception
      */
     public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
-        System.out.println(String.format("create acct\nname %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
+        System.out.println(String.format("create account\n name %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
         Map<Currency, Double> saving = new HashMap<Currency, Double>();
@@ -49,11 +46,11 @@ public class AccountService {
         saving.put(Currency.MYR, 0.0);
         saving.put(Currency.SGD, 0.0);
         saving.put(currency, saving.get(currency)+balance);
-        Account newUser = new Account(accountNumber,accountName,password,saving);
-        accountList.add(newUser);
-        replyMessage="New account for "+newUser.getAccountName()+" has been created, Acoount number is: "+newUser.getAccountNum();
-        serviceReply(1,replyMessage,ip,port,replyPacketList);
-        monitorUser(accountName+" has create a new account.",replyPacketList);
+        Account newclient = new Account(accountNumber,accountName,password,saving);		//create a new account.
+        accountList.add(newclient);														//add new account to account list.
+        replyMessage="New account for "+newclient.getAccountName()+" has been created, Acoount number is: "+newclient.getAccountNum();
+        serviceReply(1,replyMessage,ip,port,replyPacketList);			
+        monitoruser(accountName+" has create a new account.",replyPacketList);
         //return replyMessage;
     }
 
@@ -62,28 +59,29 @@ public class AccountService {
      * @param accountNum	client's account number 	
      * @param accountName	name of the account holder.
      * @param password		Account password
-     * @param ip    		IP address of current user
-     * @param port    		Port number that current user used 
+     * @param ip    		IP address of current client
+     * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
     public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
-        System.out.println(String.format("closingAcct\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
+        System.out.println(String.format("Closing Account\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
         //Account currentAccount= new Account();
 
         String replyMessage= "Your account has been close successfully";
 
-//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        i = currentUser;
+//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentclient;
+        // if condition will check client data again in case client calling service before it pass user verification service.
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
-            accountList.remove(i);
+            accountList.remove(i);			//remove client current account from account list.
             serviceReply(1,replyMessage,ip,port,replyPacketList);
-            monitorUser(accountName+"has closing his account",replyPacketList);
+            monitoruser(accountName+"has closing his account",replyPacketList);
         }
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
 
 
@@ -96,8 +94,8 @@ public class AccountService {
      * @param password		Account password.
      * @param currency		currency type client want to deposit.
      * @param amount		amount of money client want o deposit.
-     * @param ip    		IP address of current user
-     * @param port    		Port number that current user used 
+     * @param ip    		IP address of current client
+     * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
@@ -109,17 +107,17 @@ public class AccountService {
 
         String replyMessage="";
 
-//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        i = currentUser;
+//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
             serviceReply(1,replyMessage,ip,port,replyPacketList);
-            monitorUser(accountName+" deposit some money to account.",replyPacketList);
+            monitoruser(accountName+" deposit some money to account.",replyPacketList);
         }
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
 
 
@@ -132,8 +130,8 @@ public class AccountService {
      * @param password		Account password
      * @param currency		Currency type of the withdraw money 
      * @param amount		amount of money want to withdraw
-     * @param ip    		IP address of current user
-     * @param port    		Port number that current user used 
+     * @param ip    		IP address of current client
+     * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
@@ -144,8 +142,8 @@ public class AccountService {
         //Account currentAccount= new Account();
 
         String replyMessage;
-//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        i = currentUser;
+//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
 
             if((double) accountList.get(i).getSaving().get(currency)<amount) {
@@ -157,12 +155,12 @@ public class AccountService {
                 accountList.get(i).getSaving().put(currency, balance);
                 replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
                 serviceReply(1,replyMessage,ip,port,replyPacketList);
-                monitorUser(accountName+" withdraw some money from account.",replyPacketList);
+                monitoruser(accountName+" withdraw some money from account.",replyPacketList);
             }
 
         }
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
 
     }
@@ -171,8 +169,8 @@ public class AccountService {
      * @param accountNum	client's account number
      * @param accountName	name of the account holder.
      * @param password		Account password
-     * @param ip    		IP address of current user
-     * @param port    		Port number that current user used 
+     * @param ip    		IP address of current client
+     * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
@@ -182,16 +180,16 @@ public class AccountService {
         int i;
         String balanceInfo;
         String replyMessage;
-//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        i = currentUser;
+//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentclient;
         if(i != -1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
-            replyMessage = "Your balance under account : "+accountNum+"is \n"+balanceInfo;
+            replyMessage = "Your balance under account : "+accountNum+" is \n"+balanceInfo;
             serviceReply(1,replyMessage,ip,port,replyPacketList);
-            monitorUser(accountName+" check his account.",replyPacketList);
+            monitoruser(accountName+" check his account.",replyPacketList);
         }
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
 
     }
@@ -203,20 +201,20 @@ public class AccountService {
      * @param fromCurrency
      * @param toCurrency
      * @param amount
-     * @param ip    IP address of current user
-     * @param port    Port number that current user used 
+     * @param ip    IP address of current client
+     * @param port    Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
     public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws Exception {
-        System.out.println(String.format("curr exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
+        System.out.println(String.format("currency exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
 
         int i;
         double newAmount;
         String balanceInfo;
         String replyMessage;
-//        i = userVerification(accountNum,accountName,password, ip, port,replyPacketList);
-        i = currentUser;
+//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+        i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
         	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
             switch(fromCurrency) {
@@ -250,16 +248,16 @@ public class AccountService {
             replyMessage = "Your new balance under account : "+accountNum+" is \n"+balanceInfo;
             
             serviceReply(1,replyMessage,ip,port,replyPacketList);
-            monitorUser(accountName+"has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString(),replyPacketList);
+            monitoruser(accountName+" has exchange currency from "+fromCurrency.toString()+" to "+toCurrency.toString(),replyPacketList);
 
         }
         else {
-        	replyMessage ="Sorry, you don't have enough "+fromCurrency+" to convert to"+toCurrency;
+        	replyMessage ="Sorry, you don't have enough "+fromCurrency+" to convert to "+toCurrency;
         	serviceReply(0,replyMessage,ip,port,replyPacketList);
         }
         }
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
         
 
@@ -271,8 +269,8 @@ public class AccountService {
      * @param accountName	name of the account holder.
      * @param password	Account password
      * @param interval		time period of client monitor update
-     * @param ip    IP address of current user
-     * @param port    Port number that current user used 
+     * @param ip    IP address of current client
+     * @param port    Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
@@ -282,17 +280,17 @@ public class AccountService {
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
     	MonitorInfo monitorAccount= new MonitorInfo(accountNum,time,ip,port);
-    	i= currentUser;
+    	i= currentclient;
     	if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
 
     		monitorList.add(monitorAccount);
     		
 	    	replyMessage= "You have success register for monitor update";
 	    	serviceReply(1,replyMessage,ip,port,replyPacketList);
-	    	monitorUser(accountName+"has register for monitor update.",replyPacketList);
+	    	monitoruser(accountName+"has register for monitor update.",replyPacketList);
     	}
         else {
-        	serviceReply(0,"Something wrong with User data",ip,port,replyPacketList);
+        	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
     	
     	
@@ -305,10 +303,10 @@ public class AccountService {
      * @param accountNum	client's account number
      * @param accountName	name of the account holder.
      * @param password	Account password
-     * @param ip    IP address of current user
-     * @param port    Port number that current user used 
+     * @param ip    IP address of current client
+     * @param port    Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
-     * @return 	return index in account list for current client, if user verification fail return -1.
+     * @return 	return index in account list for current client, if client verification fail return -1.
      * @throws Exception
      */
     public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
@@ -318,7 +316,7 @@ public class AccountService {
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account name";
         String wrongPassword= "Sorry, you have enter the wrong password";
-        String userPassed = "User verification success";
+        String clientPassed = "client verification success";
 
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
@@ -332,8 +330,8 @@ public class AccountService {
                     return -1;
                 }
                 else {
-                    currentUser = i;
-                    serviceReply(1,userPassed,ip,port,replyPacketList);
+                    currentclient = i;
+                    serviceReply(1,clientPassed,ip,port,replyPacketList);
                     return i;
                 }
             }
@@ -348,8 +346,8 @@ public class AccountService {
      * This method use for prepare reply packet to reply client after receive a service call.
      * @param status	message type, if service call success status will be 1 else will be 0.
      * @param message    Reply message that client will receive after calling a service.
-     * @param ip    IP address of current user
-     * @param port    Port number that current user used 
+     * @param ip    IP address of current client
+     * @param port    Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out. 
      * @throws Exception
      */
@@ -367,13 +365,14 @@ public class AccountService {
     }
 
     /**
+     * This method will prepare data packet to send update to user who register for monitor update.
      * @param message	message use to send to other client who register for Monitor.
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.
      * @throws Exception
      */
-    public void monitorUser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
+    public void monitoruser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
-        System.out.println("monitor list size: "+monitorList.size());
+//        System.out.println("monitor list size: "+monitorList.size());
 //        for(int k=0;k<monitorList.size();k++) {			
 //			System.out.println("monitor List:");
 //			System.out.print(monitorList.get(k).getAccountNum());

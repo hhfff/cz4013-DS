@@ -1,15 +1,16 @@
 import java.util.*;
 
 /**
+ * Class use to store account data
  * @author LONG
  *
  */
 public class Account {
-	private int accountNum;
-	private String accountName;
-	private String passwd;
+	private int accountNum;				//accout number
+	private String accountName;			//account holder name
+	private String passwd;				//account password
 
-	private Map saving;
+	private Map saving;					//current and amount pair for balance in currency type : amount
 	public Account() {
 		// TODO Auto-generated constructor stub
 	}
