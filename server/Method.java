@@ -1,6 +1,6 @@
 /**
  * @author LONG
- *
+ * For all the service type with their integer value
  */
 public enum Method {
     CREATE_ACCOUNT(1),

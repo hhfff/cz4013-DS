@@ -1,6 +1,10 @@
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+
+/**
+ * The history class store the client information such as ID, ip address, port and packet used to reply the client
+ */
 public class History {
     private int requestID;
     private int port;

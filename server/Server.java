@@ -24,6 +24,10 @@ public class Server{
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
+
+    /**
+     * initialize
+     */
     public Server(){
         histories=new ArrayList<>();
         replyPacketList=new ArrayList<>();
@@ -35,6 +39,9 @@ public class Server{
         }
     }
 
+    /**
+     * start loop the server and dispatch received data to processData method, the data cleaned after every loop
+     */
     public void start(){
         while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
@@ -65,9 +72,10 @@ public class Server{
         }
         return ret;
     }
-    
+
+
     /**
-     * This method use to send packet to client from reply packet list.
+     * send packet in packet list to client, use chance to simulate packet lost
      */
     private void sendPacket(){
         double chance;
@@ -88,6 +96,7 @@ public class Server{
         }
        replyPacketList.clear();
     }
+
     
     /**
      * This method use to process service call send from client.
@@ -141,7 +150,7 @@ public class Server{
 
                 );
             }else if(method==Method.DEPOSITE.getValue()){
-                var data=DataProcess.unmarshalDeposite(buf,12);
+                var data=DataProcess.unmarshalDeposit(buf,12);
                 accountService.depositToAccount(
                         (int) data.get("acctNum"),
                         (String) data.get("name"),
