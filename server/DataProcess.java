@@ -38,6 +38,7 @@ public class DataProcess {
         return  byteBuffer.array();
     }
     /**
+     * This method will convert data from byte array to integer.
      * @param buf
      * @param start
      * @param byteOrder	order of byte array, in this project was Big Endian.

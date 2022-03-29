@@ -1,6 +1,6 @@
 
 /**
- * @author LONG
+ * @author 
  *Enumeration class store different currency type
  */
 public enum Currency {

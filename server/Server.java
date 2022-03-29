@@ -14,13 +14,13 @@ import java.util.Queue;
 public class Server{
     private DatagramSocket socket;
     private boolean running;
-    private final int BUFFER_SIZE=512;
-    private byte[] buf = new byte[BUFFER_SIZE];
+    private final int BUFFER_SIZE=512;						//buffer size
+    private byte[] buf = new byte[BUFFER_SIZE];				//buffer use to store date from packet
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
-    private ArrayList<DatagramPacket> replyPacketList;
-    private static int serverPort=54088;
-    private double packetChance = 0.5;
+    private ArrayList<DatagramPacket> replyPacketList;		//Array list use to store packet for sent to client  
+    private static int serverPort=54088;					//service port number
+    private double packetChance = 0.5;						//The probability that a packet is sent successfully.
 
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
@@ -65,14 +65,19 @@ public class Server{
         }
         return ret;
     }
+    
+    /**
+     * This method use to send packet to client from reply packet list.
+     */
     private void sendPacket(){
         double chance;
     	for(DatagramPacket packet:replyPacketList){
             try {
                 System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
-                chance=Math.random();
+                chance=Math.random();		//generate a random number from 0.0 to 1.0. 								
                 System.out.println("send out success chance is: "+chance);
-                if(chance<=packetChance) {
+                
+                if(chance<=packetChance) {	//only when random number smaller than packetChance then the packet will send out.  
                 
                   socket.send(packet);
                 }
@@ -81,7 +86,7 @@ public class Server{
                 e.printStackTrace();
             }
         }
-        replyPacketList.clear();
+       replyPacketList.clear();
     }
     
     /**
@@ -109,8 +114,8 @@ public class Server{
         }
         //String msg=null;
         //todo  write error catch
-        int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);
-
+        int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);	//extract and unmarshal method id from byte array.
+        // call method based on method id.
         try{
             //todo need to catch those argument order error?
             if(method==Method.CREATE_ACCOUNT.getValue()){
