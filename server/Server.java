@@ -100,15 +100,17 @@ public class Server{
         double chance;
     	for(DatagramPacket packet:replyPacketList){
             try {
-                System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
+                //System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
                 chance=Math.random();		//generate a random number from 0.0 to 1.0. 								
                // System.out.println("send out success chance is: "+chance);
                 
                 if(chance<=packetChance) {	//only when random number smaller than packetChance then the packet will send out.  
-                
-                  socket.send(packet);
+                	System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort()+"  packet sent success");
+                	socket.send(packet);
                 }
-                
+                else {
+                	System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort()+"  packet loss");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
