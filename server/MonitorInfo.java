@@ -2,7 +2,7 @@ import java.net.InetAddress;
 import java.time.LocalTime;
 
 /**
- * @author LONG
+ * @author 
  *Class to store information of the client who register for monitor update.
  */
 public class MonitorInfo {
@@ -13,10 +13,10 @@ public class MonitorInfo {
 	
 	/**
 	 * Constructor for MonitorInfo class
-	 * @param accountNum	// account number.
-	 * @param expiretime	//expire time for client finish monitor update.
-	 * @param ip			//IP address of the client.
-	 * @param port			//port number of the client.
+	 * @param accountNum	account number.
+	 * @param expiretime	expire time for client finish monitor update.
+	 * @param ip			IP address of the client.
+	 * @param port			port number of the client.
 	 */
 	public MonitorInfo(int accountNum,LocalTime expiretime,InetAddress ip,int port) {
 		this.accountNum = accountNum;

@@ -1,5 +1,5 @@
 /**
- * @author LONG
+ * @author 
  * For all the service type with their integer value
  */
 public enum Method {
