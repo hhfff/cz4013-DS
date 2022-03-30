@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -6,11 +5,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Scanner;
 
 public class Server{
     private DatagramSocket socket;
@@ -22,7 +16,7 @@ public class Server{
     private ArrayList<DatagramPacket> replyPacketList;		//Array list use to store packet for sent to client  
     private static int serverPort=8888;					//service port number
     private double packetChance = 0.6;						//The probability that a packet is sent successfully.
-    private int select;
+    private int selectSemantic;
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
     private ArrayList<History> histories;
 
@@ -43,25 +37,18 @@ public class Server{
     /**
      * start loop the server and dispatch received data to processData method, the data cleaned after every loop
      */
-    public void start(){
-       Scanner userSelect = new Scanner(System.in); 
-       System.out.println("Please select Invocation Semantics.");
-       System.out.println("0. At-Least-Once");
-       System.out.println("1. At-Most-Once\n");
-       select = userSelect.nextInt();
-       while(select!=0 && select !=1) {
-    	   System.out.println("Sorry, You have enter a invalid input. Plase try again.");
-    	   System.out.println("Please select Invocation Semantics.");
-           System.out.println("0. At-Least-Once");
-           System.out.println("1. At-Most-Once");
-           select = userSelect.nextInt();
-       }
-       if(select == 0) {
-    	   System.out.println("Server Running with At-Least-Once Invocation Semantics.");
-       }
-       else if(select == 1) {
-    	   System.out.println("Server Running with At-Most-Once Invocation Semantics.\n");
-       }
+    public void start(String[] args){
+
+        if(args[0].equals("-al")){
+            selectSemantic =0;
+            System.out.println("Server Running with At-Least-Once Invocation Semantics.");
+        }else if(args[0].equals("-am")){
+            selectSemantic =1;
+            System.out.println("Server Running with At-Most-Once Invocation Semantics.");
+        }else{
+            selectSemantic =1;
+            System.out.println("Unknown option, Server Running with At-Most-Once Invocation Semantics.");
+        }
     	while(true){
             datagramPacket = new DatagramPacket(buf, buf.length);
             try {
@@ -132,7 +119,7 @@ public class Server{
         int requestID=DataProcess.bytesToInt(buf,4,ByteOrder.BIG_ENDIAN);
         int method=DataProcess.bytesToInt(buf,8,ByteOrder.BIG_ENDIAN);	//extract and unmarshal method id from byte array.
         System.out.println("ip: "+ip.toString()+" port: "+port+" msgType: "+msgType + " request id: "+requestID +" Service: "+Method.getmethod(method));
-        if(select==1) {
+        if(selectSemantic ==1) {
         //checking history
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
