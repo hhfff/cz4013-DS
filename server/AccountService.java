@@ -195,11 +195,12 @@ public class AccountService {
     }
 
     /**
+     * 
      * @param accountNum	client's account number
      * @param accountName	name of the account holder.
-     * @param password	Account password
-     * @param fromCurrency
-     * @param toCurrency
+     * @param password		Account password
+     * @param fromCurrency	currency want to exchange from
+     * @param toCurrency	currency 
      * @param amount
      * @param ip    IP address of current client
      * @param port    Port number that current client used 

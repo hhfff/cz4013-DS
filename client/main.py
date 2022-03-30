@@ -27,6 +27,7 @@ def promptServerAddress():
                 protocol.setServerAddress(contants.SERVER_HOST,contants.SERVER_PORT)
             break
 
+
 def selectService():
     while True:
         # Main Menu

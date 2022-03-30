@@ -20,7 +20,7 @@ public class Server{
     private DatagramPacket datagramPacket = null;
     private AccountService accountService;
     private ArrayList<DatagramPacket> replyPacketList;		//Array list use to store packet for sent to client  
-    private static int serverPort=54088;					//service port number
+    private static int serverPort=8888;					//service port number
     private double packetChance = 0.6;						//The probability that a packet is sent successfully.
     private int select;
     //maybe requestId with ArrayList is better, but since is small app, can just loop the list
