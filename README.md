@@ -3,13 +3,16 @@
 options:
 1. -al: At least once
 2. -am: At most once
-```
-java -al
 
+In the project folder
+```
+$ javac -d target server/*.java
+$ cd target
+$ java Main -am
 ```
 
 ### Client
-In the client folder
+In the project folder
 ```
-$ python main.py
+$ python client/main.py
 ```
