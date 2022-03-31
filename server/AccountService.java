@@ -38,7 +38,8 @@ public class AccountService {
      * @throws Exception
      */
     public void createUserAccount(String accountName, String password, Currency currency, double balance,InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
-        System.out.println(String.format("create account\n name %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
+        try {
+    	System.out.println(String.format("create account\n name %s, passwd: %s, CurrencyType: %s, balance: %f",accountName,password,currency.toString(),balance));
         String replyMessage;
         accountNumber+=1;
         Map<Currency, Double> saving = new HashMap<Currency, Double>();
@@ -51,6 +52,10 @@ public class AccountService {
         replyMessage="New account for "+newclient.getAccountName()+" has been created, Acoount number is: "+newclient.getAccountNum();
         serviceReply(1,replyMessage,ip,port,replyPacketList);			
         monitoruser(accountName+" has create a new account.",replyPacketList);
+        }
+        catch(ArrayStoreException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
 
     }
 
@@ -66,7 +71,7 @@ public class AccountService {
      */
     public void closingUserAccount(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("Closing Account\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
-
+        try {
         int i;
         String replyMessage= "Your account has been close successfully";
         i = currentclient;
@@ -79,7 +84,10 @@ public class AccountService {
         else {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
-
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
 
     }
 
@@ -97,7 +105,7 @@ public class AccountService {
      */
     public void depositToAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
-
+        try {
         int i; double balance;
         String replyMessage="";
 
@@ -112,7 +120,10 @@ public class AccountService {
         else {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
-
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
 
     }
 
@@ -130,7 +141,7 @@ public class AccountService {
      */
     public void withdrawFromAccount(int accountNum, String accountName, String password, Currency currency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
-
+        try {
         int i; double balance;
         String replyMessage;
         i = currentclient;
@@ -152,6 +163,10 @@ public class AccountService {
         else {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
 
     }
 
@@ -166,7 +181,7 @@ public class AccountService {
      */
     public void viewBalance(int accountNum, String accountName, String password, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("view balance\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
-
+        try {
         int i;
         String balanceInfo;
         String replyMessage;
@@ -180,7 +195,10 @@ public class AccountService {
         else {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
-
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
     }
 
     /**
@@ -198,7 +216,7 @@ public class AccountService {
      */
     public void currencyExchange(int accountNum, String accountName, String password, Currency fromCurrency, Currency toCurrency, double amount, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList ) throws Exception {
         System.out.println(String.format("currency exchange\nname %s, passwd: %s, acctNUM: %s,, FromCurrencyType: %s, toCurrencyType: %s,balance: %f",accountName,password,accountNum,fromCurrency.toString(),toCurrency.toString(),amount));
-
+        try {
         int i;
         double newAmount;
         String balanceInfo;
@@ -250,7 +268,10 @@ public class AccountService {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
         
-
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
     }
 
     /**
@@ -266,6 +287,7 @@ public class AccountService {
      */
     public void registerMonitorUpdate(int accountNum, String accountName, String password, int interval, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
     	System.out.println(String.format("acc num %d , acct name %s, passwd: %s acc list size: %d, ",accountNum,accountName,password,accountList.size()));
+    	try {
     	int i,j;
     	String replyMessage;
     	LocalTime time = LocalTime.now().plusSeconds(interval);
@@ -282,7 +304,10 @@ public class AccountService {
         else {
         	serviceReply(0,"Something wrong with client data",ip,port,replyPacketList);
         }
-    	
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
     	
     	
     
@@ -301,7 +326,7 @@ public class AccountService {
      */
     public int userVerification(int accountNum, String accountName, String password,InetAddress ip,int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
         System.out.println(String.format("acc num %d create acct name %s, passwd: %s acc list size: %d",accountNum,accountName,password,accountList.size()));
-
+        try {
         int i;
         String wrongAccountNum = "Sorry, you have enter a invalid account number";
         String wrongAccountName = "Sorry, you have enter a wrong account name";
@@ -327,8 +352,12 @@ public class AccountService {
             }
         }
         serviceReply(0,wrongAccountNum,ip,port,replyPacketList);
+        
+        }
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
         return -1;
-
     }
     
     
@@ -342,7 +371,7 @@ public class AccountService {
      * @throws Exception
      */
     public void serviceReply(int status,String message, InetAddress ip, int port, ArrayList<DatagramPacket> replyPacketList) throws Exception {
-    	
+    	try {
     	
     	System.out.println(message);
     	
@@ -351,7 +380,10 @@ public class AccountService {
     	DatagramPacket reply = new DatagramPacket(replybuf,replybuf.length,ip,port);	//add message into datagram packet
     	
 		replyPacketList.add(reply);			//add datagram packet in to replay packet List.
-		
+    	}
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
+        }
     }
 
     /**
@@ -362,7 +394,7 @@ public class AccountService {
      */
     public void monitoruser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
-
+        try {
         LocalTime time = LocalTime.now();
 
         byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);	//marshal message
@@ -380,6 +412,10 @@ public class AccountService {
         			i--;
         		}
         	}
+        }
+    	}
+        catch(ArrayIndexOutOfBoundsException e) {
+        	System.out.println("Exception thrown  :" + e);
         }
         
     }
