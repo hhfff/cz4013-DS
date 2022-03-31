@@ -11,11 +11,26 @@ from utils.systemPrint import ErrorMsg, ServerReply, SystemMsg
 
 
 def setServerAddress(host,port):
-    '''set server address''' 
+    '''set server address
+
+    Args:
+        server ip (str): IP address of server
+        server port (int): Port number of server        
+    ''' 
     UDPSocket.setServerAddress(host,port)
 
 def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
-    '''send request to server'''
+    '''send request to server
+    
+    Args:
+        methodCode (Method): Method enumerated type
+        dataTuplle (Tuple): A tuple of request data
+        receiveParaTypeOder (Tuple): A tuple of expected data type order from responer
+
+    Returns:
+        bool: False if request is unsuccessfully sent True otherwise
+        list: A List of received data from server without reply ID
+    '''
     try:        
         # increase request id of every new request 
         UDPSocket.request_id +=1
@@ -46,7 +61,14 @@ def sendRequest(methodCode:Method, dataTuple:Tuple,receiveParaTypeOder:Tuple):
 
 
 def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
-    '''wait for reply from server'''
+    '''wait for reply from server
+    Args:
+        methodCode (Method): Method enumerated type
+        paraTypeOrder (Tuple): A tuple of expected data type order from responer
+
+    Returns:
+        list: A List of received data from server
+    '''
     bytearray_data = UDPSocket.recv_msg()
 
     # append message type (int) to list of expected server response data type after unmershalling receive data
@@ -54,7 +76,16 @@ def _waitForReply(methodCode:Method, paraTypeOrder:Tuple):
     return list_data
 
 def longRequest(methodCode:Method, intervalTime,dataTuple:Tuple,receiveParaTypeOder:Tuple):
-    '''long request which will close after user defined interval dedicated for monitoring service'''
+    '''long request which will close after user defined interval dedicated for monitoring service
+    Args:
+        methodCode (Method): Method enumerated type
+        intervalTime (int): Moniter time interval
+        dataTuple (Tuple): A tuple of request data
+        paraTypeOrder (Tuple): A tuple of expected data type order from responer
+
+    Returns:
+        bool: False if monitoring fails True otherwise
+    '''
     try:
         # increase request id of every new request 
         UDPSocket.request_id +=1

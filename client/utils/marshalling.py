@@ -5,7 +5,14 @@ class Marshalling:
 
     @classmethod
     def marshall(cls,data: tuple) -> bytearray:
-        '''marshall data to byte array'''      
+        '''marshall data to byte array
+
+        Args:
+            data (Tuple): A tuple of data to be marshalled
+
+        Returns:
+            bytearray: Marshalled data
+        '''      
         marshalled_data = bytearray()
 
         # convert every data element to bytes 
@@ -16,7 +23,15 @@ class Marshalling:
 
     @classmethod
     def unmarshall(cls,buffer: bytearray,paraTypeOrder:tuple) -> list:  
-        '''Unmarshall bytearray to list of data element following the data element type list: paraTypeOrder'''            
+        '''Unmarshall bytearray to list of data element following the data element type list: paraTypeOrder
+
+        Args:
+            buffer (bytearray): Bytearray data
+            paraTypeOrder (Tuple): A tuple of data type order to be followed during unmarshall
+
+        Returns:
+            list: A list of unmarshall data
+        '''              
         unmarshall_data = []
         ptr = 0 
         for data_type in paraTypeOrder:
@@ -36,7 +51,13 @@ class Marshalling:
 
     @classmethod
     def toBytes(cls, data)-> bytes:  
-        '''Convert a data to bytes based on the data type: int, float or string'''      
+        '''Convert a data to bytes based on the data type: int, float or string
+        Args:
+            data (bytearray): a data to be converted the bytes            
+
+        Returns:
+            bytes: data in bytes
+        '''      
         # < little-endian
         # > big-endian
 

@@ -93,7 +93,7 @@ public class AccountService {
      * @param accountName	name of the account holder.
      * @param password		Account password.
      * @param currency		currency type client want to deposit.
-     * @param amount		amount of money client want o deposit.
+     * @param amount		amount of money client want to deposit.
      * @param ip    		IP address of current client
      * @param port    		Port number that current client used 
      * @param replyPacketList	DatagramPacket list use to store DatagramPacket that need to send out.

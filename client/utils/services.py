@@ -4,7 +4,11 @@ from utils.systemPrint import ErrorMsg, ServerReply
 import getpass
 
 def _login_service():
-    '''Authentication Service'''
+    '''Authentication Service
+    Returns:
+        bool: False if login fails True otherwise
+        Tuple: user credentials that logged in successfully
+    '''
     while True:
         accNum = input("Please enter your bank account number:")
         if not accNum.isdigit():
@@ -32,7 +36,10 @@ def _login_service():
             return False,()
 
 def create_account_service():
-    '''open new account service'''
+    '''open new account service
+    Returns:
+        bool: False if create account fails True otherwise        
+    '''
     while True:
         accName = input("Please enter an account name:")                
         pw = getpass.getpass("Please enter your password:")
@@ -77,7 +84,10 @@ def create_account_service():
             ErrorMsg("Passwords does not match. Please re-enter all details.")
 
 def close_account_service():
-    '''closs account service'''
+    '''closs account service
+    Returns:
+        bool: False if close account fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         # user_cred: password, account number, account name
@@ -102,7 +112,10 @@ def close_account_service():
         return True
             
 def deposite_service():
-    '''Deposit money service'''
+    '''Deposit money service
+    Returns:
+        bool: False if deposite monoey fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -138,7 +151,10 @@ def deposite_service():
         return False            
 
 def withdraw_service():
-    '''Withdraw money service'''
+    '''Withdraw money service
+    Returns:
+        bool: False if withdoraw monoey fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -174,7 +190,10 @@ def withdraw_service():
         return False   
 
 def view_balance_service():
-    '''view account balance service '''
+    '''view account balance service 
+    Returns:
+        bool: False if view balance fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -193,7 +212,10 @@ def view_balance_service():
         return False
 
 def currency_exchange_service():
-    '''Currency exchange service'''
+    '''Currency exchange service
+    Returns:
+        bool: False if exchange currency fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  
@@ -232,7 +254,10 @@ def currency_exchange_service():
         return False  
     
 def monitor_service():
-    '''Monitoring service'''
+    '''Monitoring service
+    Returns:
+        bool: False if monitoring fails True otherwise      
+    '''
     logged_in = False
     while not logged_in:
         logged_in, user_cred = _login_service()  

@@ -7,17 +7,27 @@ class UDPSocket:
 
     @classmethod
     def setServerAddress(cls,host ='127.0.0.1', port= 54088):
-        '''set server address''' 
+        '''set server address
+        Args:
+            host (str): host IP address
+            port (int): host port address
+        ''' 
         cls.serverAddress = (host, port)
 
     @classmethod
     def send_msg(cls, msg: bytearray):
-        '''send request packet to server address''' 
+        '''send request packet to server address
+        Args:
+            msg (bytearray): message to be sent         
+        ''' 
         cls.client_socket.sendto(msg, cls.serverAddress)
 
     @classmethod
     def recv_msg(cls):   
-        '''listen respond packet from serve, reject any packet that is not from server address'''  
+        '''listen respond packet from serve, reject any packet that is not from server address
+        Returns:
+            bytearray: raw received bytearray data
+        '''  
         try:
             data, addr = cls.client_socket.recvfrom(cls.socket_bufer) 
             if addr == cls.serverAddress:   
@@ -29,7 +39,8 @@ class UDPSocket:
 
 
     @classmethod
-    def set_timeout(cls,time):        
+    def set_timeout(cls,time):
+        '''Set UDP socket timeout interval'''        
         cls.client_socket.settimeout(time)
 
 class TimeoutError(Exception):
