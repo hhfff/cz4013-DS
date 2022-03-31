@@ -21,7 +21,7 @@ public class Server{
     private ArrayList<History> histories;
 
     /**
-     * initialize
+     * initialize, constructor
      */
     public Server(){
         histories=new ArrayList<>();
@@ -35,7 +35,7 @@ public class Server{
     }
 
     /**
-     * start loop the server and dispatch received data to processData method, the data cleaned after every loop
+     * start loop the server and dispatch received data to processData method, the buffer cleaned after every loop
      */
     public void start(String[] args){
 
@@ -65,20 +65,6 @@ public class Server{
         }
 
     }
-    public static StringBuilder data(byte[] a)
-    {
-        if (a == null)
-            return null;
-        StringBuilder ret = new StringBuilder();
-        int i = 0;
-        while (a[i] != 0)
-        {
-            ret.append((char) a[i]);
-            i++;
-        }
-        return ret;
-    }
-
 
     /**
      * send packet in packet list to client, use chance to simulate packet lost
@@ -132,12 +118,9 @@ public class Server{
             }
         }
         }
-        //String msg=null;
-        //todo  write error catch
         
         // call method based on method id.
         try{
-            //todo need to catch those argument order error?
             if(method==Method.CREATE_ACCOUNT.getValue()){
                 var data=DataProcess.unmarshalCreateAccount(buf,12);
                 accountService.createUserAccount(
@@ -158,7 +141,6 @@ public class Server{
                         ip,
                         port,
                         replyPacketList
-
                 );
             }else if(method==Method.DEPOSITE.getValue()){
                 var data=DataProcess.unmarshalDeposit(buf,12);
@@ -195,8 +177,6 @@ public class Server{
                         port,
                         replyPacketList
                 );
-
-
             }
             else if(method==Method.CURRENCY_EXCHANGE.getValue()){
                 var data=DataProcess.unmarshalCurrencyExchange(buf,12);
@@ -210,7 +190,6 @@ public class Server{
                         ip,
                         port,
                         replyPacketList
-
                 );
             }else if(method==Method.MONITOR.getValue()){
                 var data=DataProcess.unmarshalMonitor(buf,12);
@@ -234,11 +213,11 @@ public class Server{
                         port,
                         replyPacketList
                 );
-
-
             }else{
-
-                //todo write no such method reply
+                String message="No such service for option: "+method;
+                byte[] replyBuf=DataProcess.marshal(1,1,message.length(),message);	//marshal message
+                DatagramPacket reply = new DatagramPacket(replyBuf,replyBuf.length,ip,port);	//add message into datagram packet
+                replyPacketList.add(reply);			//add datagram packet in to replay packet List
             }
             //if success means first item in array list is message
             if(!replyPacketList.isEmpty()) {
@@ -253,7 +232,6 @@ public class Server{
                 //socket.send(new DatagramPacket(data,data.length,ip,port));
                 replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
             }
-
         }catch (Exception e){
             e.printStackTrace();
             String msg="Error on request param";
@@ -262,18 +240,6 @@ public class Server{
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
         sendPacket();
-    }
-
-    public DatagramSocket getSocket() {
-        return this.socket;
-    }
-
-    public static int getServerPort() {
-        return serverPort;
-    }
-
-    public static void setServerPort(int serverPort) {
-        Server.serverPort = serverPort;
     }
 }
 
