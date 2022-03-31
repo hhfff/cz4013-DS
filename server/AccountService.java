@@ -51,7 +51,7 @@ public class AccountService {
         replyMessage="New account for "+newclient.getAccountName()+" has been created, Acoount number is: "+newclient.getAccountNum();
         serviceReply(1,replyMessage,ip,port,replyPacketList);			
         monitoruser(accountName+" has create a new account.",replyPacketList);
-        //return replyMessage;
+
     }
 
     /**
@@ -68,11 +68,7 @@ public class AccountService {
         System.out.println(String.format("Closing Account\nname %s, passwd: %s, acctNUM: %s,",accountName,password,accountNum));
 
         int i;
-        //Account currentAccount= new Account();
-
         String replyMessage= "Your account has been close successfully";
-
-//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
         i = currentclient;
         // if condition will check client data again in case client calling service before it pass user verification service.
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
@@ -103,11 +99,8 @@ public class AccountService {
         System.out.println(String.format("deposite\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
-        //Account currentAccount= new Account();
-
         String replyMessage="";
 
-//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
         i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
@@ -139,10 +132,7 @@ public class AccountService {
         System.out.println(String.format("withdraw\nname %s, passwd: %s, acctNUM: %s,, CurrencyType: %s, balance: %f",accountName,password,accountNum,currency.toString(),amount));
 
         int i; double balance;
-        //Account currentAccount= new Account();
-
         String replyMessage;
-//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
         i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
 
@@ -180,7 +170,6 @@ public class AccountService {
         int i;
         String balanceInfo;
         String replyMessage;
-//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
         i = currentclient;
         if(i != -1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balanceInfo= accountList.get(i).getSaving().toString().substring(1,accountList.get(i).getSaving().toString().length()-1);
@@ -214,7 +203,7 @@ public class AccountService {
         double newAmount;
         String balanceInfo;
         String replyMessage;
-//        i = clientVerification(accountNum,accountName,password, ip, port,replyPacketList);
+
         i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
         	if((double)accountList.get(i).getSaving().get(fromCurrency) >= amount) {
@@ -321,7 +310,7 @@ public class AccountService {
 
         for(i=0;i<accountList.size();i++) {
             if(accountList.get(i).getAccountNum()==accountNum) {
-                //currentAccount=accountList.get(i);
+
                 if(!accountList.get(i).getAccountName().equals(accountName)) {
                     serviceReply(0,wrongAccountName,ip,port,replyPacketList);
                     return -1;
@@ -373,13 +362,7 @@ public class AccountService {
      */
     public void monitoruser(String message, ArrayList<DatagramPacket> replyPacketList)  throws Exception{
         System.out.println(message);
-//        System.out.println("monitor list size: "+monitorList.size());
-//        for(int k=0;k<monitorList.size();k++) {			
-//			System.out.println("monitor List:");
-//			System.out.print(monitorList.get(k).getAccountNum());
-//			System.out.print("   "+monitorList.get(k).getExpireTime());
-//			System.out.println("     "+monitorList.get(k).getIP());
-//		}
+
         LocalTime time = LocalTime.now();
 
         byte[] updatebuf=DataProcess.marshal(1,1,message.length(),message);	//marshal message
@@ -388,13 +371,9 @@ public class AccountService {
         	for(int i=0; i<monitorList.size();i++) {	
         		if(monitorList.get(i).getExpireTime().compareTo(time)>=0) {	//loop through the monitor list to find client that still monitor update
         			DatagramPacket update = new DatagramPacket(updatebuf,updatebuf.length);  //add message into datagram packet
-        			//System.out.println("packet for account: "+monitorList.get(i).getAccountNum()+"has add to packet list. IP: "+monitorList.get(i).getIP());
         			update.setAddress(monitorList.get(i).getIP());	
-        			update.setPort(monitorList.get(i).getPort());
-        			//System.out.println("IP for update packet:"+update.getAddress());
-        			
+        			update.setPort(monitorList.get(i).getPort());       			
         			replyPacketList.add(update);	//add datagram packet in to replay packet List.
-        			//System.out.println("reply List size: "+replyPacketList.size());
         		}
         		else {
         			monitorList.remove(i);	//If client monitor interval has finish, remove from monitor list.

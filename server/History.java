@@ -12,6 +12,12 @@ public class History {
     //private String replyMessage;
     private DatagramPacket replyPacket;
 
+    /**
+     * @param requestID		request ID generate by client
+     * @param port			port using by client
+     * @param ipAddress		IP address of the client
+     * @param replyPacket	reply packet store the reply message for client
+     */
     public History(int requestID, int port, InetAddress ipAddress, DatagramPacket replyPacket) {
         this.requestID = requestID;
         this.port = port;

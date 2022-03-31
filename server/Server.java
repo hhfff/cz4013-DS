@@ -53,7 +53,6 @@ public class Server{
             datagramPacket = new DatagramPacket(buf, buf.length);
             try {
 
-
                 socket.receive(datagramPacket);
                 buf = datagramPacket.getData();
                 processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
@@ -63,7 +62,6 @@ public class Server{
             }
             buf = new byte[BUFFER_SIZE];
         }
-
     }
 
     /**
@@ -73,9 +71,7 @@ public class Server{
         double chance;
     	for(DatagramPacket packet:replyPacketList){
             try {
-                //System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort());
-                chance=Math.random();		//generate a random number from 0.0 to 1.0. 								
-               // System.out.println("send out success chance is: "+chance);
+                chance=Math.random();		//generate a random number from 0.0 to 1.0.				
                 
                 if(chance<=packetChance) {	//only when random number smaller than packetChance then the packet will send out.  
                 	System.out.println("packet sent: "+packet.getAddress()+"  port: "+packet.getPort()+"  packet sent success");
@@ -109,14 +105,13 @@ public class Server{
         //checking history
         for(History history: histories){
             if(history.getRequestID()==requestID && history.getIpAddress().equals(ip) && history.getPort()==port){
-                //found in history, just reply
-                //socket.send(new DatagramPacket(data,data.length,ip,port));
+                //found in history, just reply                
                 replyPacketList.add(history.getReplyPacket());
                 System.out.println("found in history");
                 sendPacket();
                 return ;
             }
-        }
+          }
         }
         
         // call method based on method id.
@@ -229,14 +224,12 @@ public class Server{
             else {
                 String msg="error in server process";
                 byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
-                //socket.send(new DatagramPacket(data,data.length,ip,port));
                 replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
             }
         }catch (Exception e){
             e.printStackTrace();
             String msg="Error on request param";
-            byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);
-            //socket.send(new DatagramPacket(data,data.length,ip,port));
+            byte[] data=DataProcess.marshal(requestID,0,msg.length(),msg);            
             replyPacketList.add(new DatagramPacket(data,data.length,ip,port));
         }
         sendPacket();

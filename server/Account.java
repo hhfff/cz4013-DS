@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * Class use to store account data
- * @author LONG
+ * @author 
  *
  */
 public class Account {
