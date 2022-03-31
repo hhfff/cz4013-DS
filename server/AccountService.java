@@ -112,6 +112,7 @@ public class AccountService {
         i = currentclient;
         if(i!=-1 && accountList.get(i).getAccountNum()==accountNum && accountList.get(i).getAccountName().equals(accountName) && accountList.get(i).getPasswd().equals(password)) {
             balance = (double) accountList.get(i).getSaving().get(currency)+amount;
+            
             accountList.get(i).getSaving().put(currency, balance);
             replyMessage="Your new balance for "+currency.toString()+" is : "+balance;
             serviceReply(1,replyMessage,ip,port,replyPacketList);
