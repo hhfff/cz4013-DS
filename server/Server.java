@@ -27,7 +27,7 @@ public class Server{
         histories=new ArrayList<>();
         replyPacketList=new ArrayList<>();
         try {
-            socket = new DatagramSocket(54088);
+            socket = new DatagramSocket(serverPort);
             accountService=new AccountService();
         } catch (SocketException e) {
             e.printStackTrace();
@@ -55,6 +55,7 @@ public class Server{
 
                 socket.receive(datagramPacket);
                 buf = datagramPacket.getData();
+                System.out.println(buf);
                 processData(buf,datagramPacket.getAddress(), datagramPacket.getPort());
 
             } catch (IOException e) {
